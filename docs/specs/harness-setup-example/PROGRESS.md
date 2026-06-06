@@ -4,8 +4,8 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-06 (session 2)
-**Current phase:** BUILD complete — all Phase 1 tasks done; ready for reviewer
+**Last updated:** 2026-06-06 (session 2 — reviewed)
+**Current phase:** Phase 1 COMPLETE — reviewed (REQUEST_CHANGES → F1–F5 fixed) & re-verified
 
 ---
 
@@ -17,7 +17,7 @@ and at the end of every session.
 | 2. Requirements (EARS)     | ✅ done                                               | `requirements.md` — R1…R15                                                                                |
 | 3. Design (boundary-first) | ✅ done                                               | `design.md` — file plan, engine contract, soft/hardened, Docker, write schemas; references ADR-0001..0004 |
 | 4. Tasks + IMPL            | ✅ done — all T-a/T-b/T-c/T-d/T-e/T-f/T-g/T-h/T-i/T-j | `tasks.md` — all non-opt checked; opts T-c3/T-j1/T-j2 also done                                           |
-| 5. Validate                | ⏸ next                                                | Pass to reviewer                                                                                          |
+| 5. Validate                | ✅ done                                               | reviewer: REQUEST_CHANGES → F1–F5 addressed; 35 tests, oxlint+dprint+grep gate clean; R10.3 now proven    |
 
 ## Artifacts produced (BUILD phase — session 2, 2026-06-06)
 

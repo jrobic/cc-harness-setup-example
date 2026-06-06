@@ -13,6 +13,7 @@
     "engine:apply": "bun run plugins/jrobic-cc-harness-setup-example/scripts/harness-setup.ts apply"
   },
   "devDependencies": {
+    "@types/node": "24.13.1",
     "dprint": "^0.54.0",
     "oxlint": "^1.68.0"
   }
