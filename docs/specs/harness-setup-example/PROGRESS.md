@@ -16,8 +16,37 @@ and at the end of every session.
 | 1. Brief | ✅ done | Validated by PM + user decisions (see brief in journal) |
 | 2. Requirements (EARS) | ✅ done | `requirements.md` — R1…R15 |
 | 3. Design (boundary-first) | ✅ done | `design.md` — file plan, engine contract, soft/hardened, Docker, write schemas; references ADR-0001..0004 |
-| 4. Tasks + IMPL | ⏳ tasks written, build not started | `tasks.md` — T-a…T-j; no application code yet |
+| 4. Tasks + IMPL | ⏳ scaffold + engine complete (T-a/T-b/T-d done) | `tasks.md` — T-c/T-e/T-f/T-g/T-h/T-i/T-j remain |
 | 5. Validate | ⏸ not started | — |
+
+## Artifacts produced (BUILD phase — 2026-06-06)
+
+### Scaffold (T-a1…T-a6) — complete
+- `/package.json` — name, Bun engines, scripts (test / build:hardened / engine:check / engine:apply)
+- `/.gitignore` — dist/, *.bak-*, node_modules/
+- `/LICENSE` — MIT, author jrobic, 2026
+- `/dprint.json` — formatter config (TypeScript / JSON / Markdown)
+- `/.oxlintrc.json` — linter config (stack defaults)
+- `/.claude-plugin/marketplace.json` — generic owner, advertises jrobic-cc-harness-setup-example
+- `/plugins/jrobic-cc-harness-setup-example/.claude-plugin/plugin.json` — generic author handle jrobic, EN description
+- `/plugins/jrobic-cc-harness-setup-example/.mcp.json` — empty mcpServers, Phase 2 placeholder noted
+- `/.claude/settings.json` — extraKnownMarketplaces pointing this repo (clone & go)
+
+### Engine (T-b1…T-b8) — complete
+- `/tests/helpers/tmp-home.ts` — isolated HOME builder (HARNESS_HOME seam)
+- `/tests/harness-setup.check.test.ts` — 9 tests, all green
+- `/tests/harness-setup.apply.test.ts` — 10 tests, all green
+- `/tests/harness-setup.idempotence.test.ts` — 6 tests, all green
+- `/tests/harness-setup.backup.test.ts` — 7 tests, all green
+- `/plugins/jrobic-cc-harness-setup-example/scripts/harness-setup.ts` — full engine, shebang, main() returns exit code
+
+**bun test result: 32 pass, 0 fail (34 ms)**
+
+### Reference data (T-d1, T-d2) — complete
+- `/plugins/jrobic-cc-harness-setup-example/reference/deny.json` — 11 generic secret/credential read-block rules
+- `/plugins/jrobic-cc-harness-setup-example/reference/CONTEXT.md` — EN example team context, deny ≠ context note, no internal references
+
+---
 
 ## Artifacts produced (SPEC phase)
 
@@ -34,13 +63,21 @@ and at the end of every session.
 
 ## NEXT STEPS
 
-1. **Human gate** on the structural choices (ADR-0001..0004) and the file plan in
-   `design.md` §2 before any code.
-2. Resolve the open questions below (a couple block naming/format details).
-3. Start BUILD at **T-a1** (scaffold), then the engine critical path
-   (T-b1 → T-b8) tests-first.
-4. `git init` locally + create the feature branch before the first commit (repo
-   has no local git yet).
+**Next build session (scope: tooling + infra)**
+
+1. **T-c1** — `hooks.json` (SessionStart nudge, soft mode invocation, `${CLAUDE_PLUGIN_ROOT}`)
+2. **T-c2** — `scripts/build-hardened.ts` (bun build --compile); wire `build:hardened` script
+3. **T-c4** — verify hardened binary produces identical exit codes to soft mode
+4. **T-e1** — `commands/harness-setup.md` (EN, filesystem fallback for `${CLAUDE_PLUGIN_ROOT}`, confirm-before-write)
+5. **T-e2** — `skills/harness-setup/SKILL.md` (EN, same confirm-before-write flow)
+6. **T-f1** — ensure all tests pass on a clean `bun test` from repo root (already green, mark done)
+7. **T-g1** — `docker/Dockerfile` (Bun base, isolated HOME/HARNESS_HOME, engine demo)
+8. **T-g2** — `.devcontainer/devcontainer.json` thin wrapper
+9. **T-h1** — `.github/workflows/ci.yml` (push/PR → oxlint + dprint check + bun test)
+10. **T-i1** — `README.md` (EN, what/why, install public + private HTTPS, soft/hardened caveat, Docker demo, bun test)
+11. **T-i2** — de-internalisation grep gate (no internal host/CLI/CA/org/model/MDM references)
+
+**Optional (T-c3, T-j1, T-j2) last.**
 
 ## Open questions — RESOLVED (2026-06-06, user)
 

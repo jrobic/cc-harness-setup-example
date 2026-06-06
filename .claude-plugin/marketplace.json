@@ -1,0 +1,12 @@
+{
+  "name": "cc-harness-setup-example",
+  "description": "Example Claude Code harness: deny list, context import, and team tooling in one command.",
+  "owner": "jrobic",
+  "plugins": [
+    {
+      "name": "jrobic-cc-harness-setup-example",
+      "source": "./plugins/jrobic-cc-harness-setup-example",
+      "description": "Generic harness plugin: merges deny rules, copies team context, ensures CLAUDE.md import."
+    }
+  ]
+}

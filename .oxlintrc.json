@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "no-unused-vars": "error",
+    "no-undef": "error",
+    "eqeqeq": "error",
+    "no-console": "off",
+    "no-var": "error",
+    "prefer-const": "error"
+  },
+  "env": {
+    "node": true
+  },
+  "ignorePatterns": [
+    "dist/",
+    "node_modules/"
+  ]
+}
