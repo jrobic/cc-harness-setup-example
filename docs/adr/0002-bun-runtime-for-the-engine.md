@@ -21,7 +21,7 @@ ADR-0003).
 
 - The engine must stay dependency-free and deterministic.
 - We want a first-class test runner without adding a test framework dependency.
-- We want the *option* to ship a standalone compiled binary (ADR-0003).
+- We want the _option_ to ship a standalone compiled binary (ADR-0003).
 - This is an example repo; the toolchain should be one install, not several.
 
 ## Options Considered
@@ -29,9 +29,11 @@ ADR-0003).
 ### Option A: Node.js (keep `.mjs`, add Vitest)
 
 **Pros**:
+
 - Ubiquitous; the POC already runs on it.
 
 **Cons**:
+
 - Needs a separate test framework (Vitest) and its dependency tree.
 - No first-party single-file `--compile` path for the hardened mode (ADR-0003);
   would require `pkg`/SEA gymnastics.
@@ -41,6 +43,7 @@ ADR-0003).
 ### Option B: Bun
 
 **Pros**:
+
 - Runs TypeScript directly — engine becomes `harness-setup.ts`, no build step in
   soft mode.
 - Built-in test runner (`bun test`) — no test framework dependency.
@@ -49,6 +52,7 @@ ADR-0003).
 - Single toolchain to install for a reader following along.
 
 **Cons**:
+
 - Bun must be installed on the developer's machine for soft mode (hooks run
   `bun run`). Mitigated by the Docker demo and by documenting the install.
 - Smaller ecosystem than Node — irrelevant here since the engine is
@@ -87,13 +91,13 @@ is bounded by the Docker demo and clear install docs.
 
 ### Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Reader's machine lacks Bun, soft-mode hook fails silently | Medium | Low | Hook degrades to a nudge; README lists Bun as a prerequisite; Docker demo provides it |
-| Bun API drift across versions | Low | Low | Engine uses only stable `node:fs`/`node:os`/`node:path` APIs Bun implements |
+| Risk                                                      | Likelihood | Impact | Mitigation                                                                            |
+| --------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------- |
+| Reader's machine lacks Bun, soft-mode hook fails silently | Medium     | Low    | Hook degrades to a nudge; README lists Bun as a prerequisite; Docker demo provides it |
+| Bun API drift across versions                             | Low        | Low    | Engine uses only stable `node:fs`/`node:os`/`node:path` APIs Bun implements           |
 
 ## References
 
-- CONTEXT.md — *Engine*, *Soft vs hardened*
+- CONTEXT.md — _Engine_, _Soft vs hardened_
 - ADR-0003 (soft vs hardened compile knob)
 - Bun docs: `bun build --compile`, `bun test`

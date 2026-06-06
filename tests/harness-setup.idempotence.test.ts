@@ -55,9 +55,13 @@ describe("idempotence — second apply", () => {
 
     const content = readFileSync(tmp.claudeMdPath, "utf8");
 
-    const beginCount = (content.match(new RegExp(BEGIN.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
-    const endCount = (content.match(new RegExp(END.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
-    const importCount = (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
+    const beginCount =
+      (content.match(new RegExp(BEGIN.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
+    const endCount =
+      (content.match(new RegExp(END.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
+    const importCount =
+      (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? [])
+        .length;
 
     expect(beginCount).toBe(1);
     expect(endCount).toBe(1);
@@ -73,7 +77,9 @@ describe("idempotence — second apply", () => {
     await main("apply", { HARNESS_HOME: tmp.home });
 
     const content = readFileSync(tmp.claudeMdPath, "utf8");
-    const importCount = (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
+    const importCount =
+      (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? [])
+        .length;
 
     expect(importCount).toBe(1);
   });
@@ -110,7 +116,9 @@ describe("idempotence — second apply", () => {
     expect(content).not.toContain(BEGIN);
     expect(content).not.toContain(END);
     // Original import line is still there exactly once
-    const importCount = (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length;
+    const importCount =
+      (content.match(new RegExp(IMPORT_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? [])
+        .length;
     expect(importCount).toBe(1);
   });
 });

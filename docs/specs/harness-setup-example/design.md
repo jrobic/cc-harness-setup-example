@@ -131,11 +131,11 @@ harness-setup <check|apply>
 
 ### Exit codes (stable contract — tests assert these)
 
-| Code | Meaning |
-|------|---------|
-| `0`  | `check`: configuration complete · `apply`: applied successfully |
+| Code | Meaning                                                              |
+| ---- | -------------------------------------------------------------------- |
+| `0`  | `check`: configuration complete · `apply`: applied successfully      |
 | `2`  | usage error (unknown mode) or invalid JSON in target `settings.json` |
-| `3`  | `check`: configuration incomplete (missing deny rule and/or import) |
+| `3`  | `check`: configuration incomplete (missing deny rule and/or import)  |
 
 ### Path resolution
 
@@ -145,7 +145,7 @@ harness-setup <check|apply>
   isolation (R7). Resolution order:
   1. an explicit isolation override env var (e.g. `HARNESS_HOME`) if set;
   2. otherwise the standard home directory.
-  Derived targets:
+     Derived targets:
   - `<home>/.claude/settings.json`
   - `<home>/.claude/CLAUDE.md`
   - `<home>/.claude/harness/CONTEXT.md`
@@ -188,7 +188,9 @@ calls `process.exit(main(...))`.
 …the user's existing content, untouched…
 
 <!-- BEGIN harness (managed — do not edit) -->
+
 @~/.claude/harness/CONTEXT.md
+
 <!-- END harness -->
 ```
 
@@ -227,8 +229,8 @@ sequenceDiagram
 
 ## 6. Soft vs hardened strategy (ADR-0003)
 
-Two invocation paths for the same engine. The seam is *how hooks and the command
-reference the engine*.
+Two invocation paths for the same engine. The seam is _how hooks and the command
+reference the engine_.
 
 ```mermaid
 flowchart LR
@@ -252,17 +254,17 @@ flowchart LR
   and the command between the two modes so the switch is a single command, not a
   manual edit.
 
-**Honesty caveat (must be in README + here):** the hardened binary is *not*
+**Honesty caveat (must be in README + here):** the hardened binary is _not_
 enforcement. It only resists accidental/trivial edits to the tooling. Real
 enforcement is `permissions.deny`, and only the managed scope is non-bypassable.
 Never describe the binary as tamper-proof. (ADR-0003.)
 
 ### `${CLAUDE_PLUGIN_ROOT}` trap (pedagogical)
 
-| Surface | Expands? | Strategy |
-|---------|----------|----------|
-| hook JSON (`hooks.json`) | yes | use `${CLAUDE_PLUGIN_ROOT}` directly |
-| command markdown | **no** | filesystem fallback: find the engine under `~/.claude/plugins` |
+| Surface                  | Expands? | Strategy                                                       |
+| ------------------------ | -------- | -------------------------------------------------------------- |
+| hook JSON (`hooks.json`) | yes      | use `${CLAUDE_PLUGIN_ROOT}` directly                           |
+| command markdown         | **no**   | filesystem fallback: find the engine under `~/.claude/plugins` |
 
 ## 7. Docker / devcontainer demo (R12)
 
@@ -287,12 +289,12 @@ flowchart LR
 All tests use `tests/helpers/tmp-home.ts` to build an isolated HOME and point the
 engine at it via the env override; they never touch the real `~/.claude`.
 
-| Test file | Asserts |
-|-----------|---------|
-| `check.test.ts` | exit `0` when complete; exit `3` when a deny rule or import is missing; exit `2` on invalid `settings.json` |
-| `apply.test.ts` | deny concat + dedup; pre-existing unrelated deny rules preserved; context file copied; one managed import block created |
-| `idempotence.test.ts` | second `apply` leaves no duplicate deny rules and exactly one import; `check` after `apply` exits `0` |
-| `backup.test.ts` | `.bak-<timestamp>` created when a file changes; **no** backup when nothing changes (R4.3/R6.2) |
+| Test file             | Asserts                                                                                                                 |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `check.test.ts`       | exit `0` when complete; exit `3` when a deny rule or import is missing; exit `2` on invalid `settings.json`             |
+| `apply.test.ts`       | deny concat + dedup; pre-existing unrelated deny rules preserved; context file copied; one managed import block created |
+| `idempotence.test.ts` | second `apply` leaves no duplicate deny rules and exactly one import; `check` after `apply` exits `0`                   |
+| `backup.test.ts`      | `.bak-<timestamp>` created when a file changes; **no** backup when nothing changes (R4.3/R6.2)                          |
 
 `main(mode, env)` returning an exit code (section 3) lets tests run in-process and
 inspect the resolved isolated home.
@@ -306,14 +308,14 @@ check (dprint) → `bun test`. Fails the job on any lint or test failure.
 
 Carried from the brief; each item becomes a check in `tasks.md`:
 
-| Source artifact | Internal content to remove | Generic replacement |
-|-----------------|----------------------------|---------------------|
-| `plugin.json` | author "internal org" | generic handle (`jrobic`) |
-| `marketplace.json` | internal owner/email | generic owner |
-| `reference/CONTEXT.md` | "internal marketplace", "security/IT validation" | generic example team context (EN) |
-| `README.md` | internal git host / host CLI / in-house CA section | generic public + private HTTPS (EN), ADR-0004 |
-| `BRIEF.md` | entire file (internal) | **not shipped** |
-| commands / skill / hooks / deny.json / engine | French strings, Node `.mjs` | English, Bun `.ts` |
+| Source artifact                               | Internal content to remove                         | Generic replacement                           |
+| --------------------------------------------- | -------------------------------------------------- | --------------------------------------------- |
+| `plugin.json`                                 | author "internal org"                              | generic handle (`jrobic`)                     |
+| `marketplace.json`                            | internal owner/email                               | generic owner                                 |
+| `reference/CONTEXT.md`                        | "internal marketplace", "security/IT validation"   | generic example team context (EN)             |
+| `README.md`                                   | internal git host / host CLI / in-house CA section | generic public + private HTTPS (EN), ADR-0004 |
+| `BRIEF.md`                                    | entire file (internal)                             | **not shipped**                               |
+| commands / skill / hooks / deny.json / engine | French strings, Node `.mjs`                        | English, Bun `.ts`                            |
 
 A final grep gate (tasks.md) verifies no internal reference remains before the
 repo is publishable.

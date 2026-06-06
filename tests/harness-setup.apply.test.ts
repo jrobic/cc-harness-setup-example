@@ -68,7 +68,7 @@ describe("apply — deny merge", () => {
   });
 
   it("preserves pre-existing deny rules not in the reference set (R4.2)", async () => {
-    const customRule = "Read(./internal-secrets/**)" ;
+    const customRule = "Read(./internal-secrets/**)";
     const tmp = createTmpHome({
       settingsJson: JSON.stringify({ permissions: { deny: [customRule] } }),
       claudeMd: "",
@@ -101,16 +101,9 @@ describe("apply — deny merge", () => {
       claudeMd: `${BEGIN}\n${IMPORT_LINE}\n${END}`,
     });
 
-    // Note the mtime before apply
-    const { mtimeMs: before } = Bun.file(tmp.settingsPath).size
-      ? { mtimeMs: (await Bun.file(tmp.settingsPath).stat())?.mtimeMs ?? 0 }
-      : { mtimeMs: 0 };
-
     await main("apply", { HARNESS_HOME: tmp.home });
 
-    // No .bak file should exist for settings.json
-    const bakExists = existsSync(`${tmp.settingsPath}.bak-`);
-    // We check by looking for any .bak- file in the .claude dir
+    // No settings.json.bak-… file should be created when nothing changed.
     const { readdirSync } = await import("node:fs");
     const claudeDir = tmp.settingsPath.replace(/\/settings\.json$/, "");
     const files = readdirSync(claudeDir);

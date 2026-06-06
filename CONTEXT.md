@@ -26,7 +26,7 @@ on purpose because they have different trust properties.
   agents, hooks, MCP servers. Distributed as a **plugin** through a
   **marketplace**.
 - **Context** — guidance and conventions for the agent. Advisory, overridable.
-  Lives in `CLAUDE.md` (and equivalents). It is *not* enforcement.
+  Lives in `CLAUDE.md` (and equivalents). It is _not_ enforcement.
 
 > Key invariant: **deny ≠ context.** A hard prohibition belongs in the deny list
 > (or a `PreToolUse` hook), never in `CLAUDE.md`. `CLAUDE.md` is guidance the
@@ -43,7 +43,7 @@ then installs plugins from it.
 A distributable bundle of agent tooling: commands, skills, agents, hooks, and MCP
 server declarations (`.mcp.json`). Declared by a `.claude-plugin/plugin.json`
 manifest. A plugin **cannot** ship a deny list or context import directly — those
-are not plugin components (see *Out-of-plugin writes*).
+are not plugin components (see _Out-of-plugin writes_).
 
 ## Deny list
 
@@ -100,7 +100,7 @@ Two distribution modes for the engine, selected by a build knob:
 - **hardened** — the engine is compiled to a standalone binary and shipped as
   such; hooks run the binary.
 
-> Honesty caveat: *hardened is not enforcement.* A compiled binary only hardens
+> Honesty caveat: _hardened is not enforcement._ A compiled binary only hardens
 > the **tooling** against accidental or trivial edits. Real enforcement is the
 > deny list in `settings.json`, and only the **managed** scope is truly
 > non-bypassable. "Compiled" must never be sold as "tamper-proof".

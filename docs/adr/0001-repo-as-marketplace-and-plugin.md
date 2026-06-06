@@ -6,7 +6,7 @@
 
 ## Context
 
-This project is an open-source *example* showing how to onboard a developer onto
+This project is an open-source _example_ showing how to onboard a developer onto
 a recommended Claude Code configuration in one command. It ships a marketplace, a
 plugin, and the supporting docs.
 
@@ -30,11 +30,13 @@ newcomer, since pedagogy is the product here.
 `plugins/<plugin>/`.
 
 **Pros**:
+
 - One repo, one clone, everything visible.
 - Matches the source POC layout; minimal moving parts.
 - `extraKnownMarketplaces` can point at this same repo for clone & go.
 
 **Cons**:
+
 - Marketplace and plugin versioning are coupled (acceptable for an example).
 
 **Effort**: Low
@@ -42,9 +44,11 @@ newcomer, since pedagogy is the product here.
 ### Option B: Separate marketplace repo + separate plugin repo(s)
 
 **Pros**:
+
 - Independent versioning; closer to a large real-world org setup.
 
 **Cons**:
+
 - Two repos to clone and cross-reference; more ceremony than an example needs.
 - Harder to demonstrate clone & go from a single entry point.
 
@@ -52,7 +56,7 @@ newcomer, since pedagogy is the product here.
 
 ## Decision
 
-We adopt **Option A**: the repository *is* the marketplace and hosts the plugin
+We adopt **Option A**: the repository _is_ the marketplace and hosts the plugin
 inside it.
 
 - Repository name: `cc-harness-setup-example`.
@@ -82,11 +86,11 @@ example and costs navigability.
 
 ### Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Readers copy the coupled layout into a large multi-plugin org | Medium | Low | README states this layout is an *example* and points at the split-repo option for scale |
+| Risk                                                          | Likelihood | Impact | Mitigation                                                                              |
+| ------------------------------------------------------------- | ---------- | ------ | --------------------------------------------------------------------------------------- |
+| Readers copy the coupled layout into a large multi-plugin org | Medium     | Low    | README states this layout is an _example_ and points at the split-repo option for scale |
 
 ## References
 
-- CONTEXT.md — *Marketplace*, *Plugin*, *Clone & go*
+- CONTEXT.md — _Marketplace_, _Plugin_, _Clone & go_
 - ADR-0002 (Bun runtime), ADR-0004 (public/private install)

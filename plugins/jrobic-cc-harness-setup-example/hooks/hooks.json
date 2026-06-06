@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun run \"${CLAUDE_PLUGIN_ROOT}/scripts/harness-setup.ts\" check >/dev/null 2>&1; code=$?; [ $code -eq 3 ] && echo 'Harness: configuration incomplete — run /harness-setup to apply the recommended deny rules and context import.' || true"
+          }
+        ]
+      }
+    ]
+  }
+}

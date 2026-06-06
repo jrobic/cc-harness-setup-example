@@ -39,5 +39,5 @@ Never put hard prohibitions here: they belong in the deny list.
 
 ---
 
-*This is a generic example context. Replace this content with your team's
-actual conventions before deploying the harness in a real project.*
+_This is a generic example context. Replace this content with your team's
+actual conventions before deploying the harness in a real project._

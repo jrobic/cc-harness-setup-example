@@ -8,7 +8,7 @@
 
 The engine (`harness-setup.ts`, ADR-0002) is the deterministic program that
 performs the out-of-plugin writes. There are two competing distribution wishes:
-keep it readable and editable so a learner can study and adapt it, *and* harden
+keep it readable and editable so a learner can study and adapt it, _and_ harden
 it against accidental or trivial edits in a more controlled rollout.
 
 ### Problem
@@ -65,14 +65,14 @@ We adopt **Option C: a compile knob exposing both `soft` and `hardened` modes.**
 
 ### Rationale
 
-The value of this repo is pedagogical. Showing *both* distribution stances, and
+The value of this repo is pedagogical. Showing _both_ distribution stances, and
 the seam between them, is more instructive than asserting one. The knob makes the
 trade-off the lesson.
 
 ### Honesty caveat (load-bearing — must appear in shipped docs)
 
 **Hardened is not enforcement.** Compiling the engine only hardens the **tooling**
-layer against accidental or trivial editing. It is *not* tamper-proof and must
+layer against accidental or trivial editing. It is _not_ tamper-proof and must
 never be described as "unmodifiable":
 
 - Real enforcement is the **deny list** in `settings.json`.
@@ -98,14 +98,14 @@ Promotion to managed enforcement is explicitly **out of scope** for Phase 1
 
 ### Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Readers read "compiled" as "secure/enforced" | Medium | High | The honesty caveat is repeated in README and design.md; "tamper-proof" is never used |
-| Hardened binary built for the wrong platform | Medium | Low | Document `--target`; default demo path is soft mode |
-| Two code paths drift | Low | Medium | Hook-resolution logic is shared/tested for both modes |
+| Risk                                         | Likelihood | Impact | Mitigation                                                                           |
+| -------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------ |
+| Readers read "compiled" as "secure/enforced" | Medium     | High   | The honesty caveat is repeated in README and design.md; "tamper-proof" is never used |
+| Hardened binary built for the wrong platform | Medium     | Low    | Document `--target`; default demo path is soft mode                                  |
+| Two code paths drift                         | Low        | Medium | Hook-resolution logic is shared/tested for both modes                                |
 
 ## References
 
-- CONTEXT.md — *Soft vs hardened*, *Engine*, *The three layers*
+- CONTEXT.md — _Soft vs hardened_, _Engine_, _The three layers_
 - ADR-0002 (Bun runtime)
 - Bun docs: single-file executables (`--compile`, `--target`)

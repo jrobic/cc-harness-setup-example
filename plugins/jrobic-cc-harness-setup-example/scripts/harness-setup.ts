@@ -4,13 +4,13 @@
  *
  * Usage: bun run harness-setup.ts [check|apply]
  *   check   Audit only; never writes. Exit 0 = complete, 3 = incomplete.
- *   apply   Merge deny rules, copy context, ensure import block. Exit 0 = applied.
+ *   apply   Merge deny rules, write context, ensure import block. Exit 0 = applied.
  *   (no arg) defaults to check; unknown mode → exit 2.
  *
  * Writes ONLY to:
  *   <home>/.claude/settings.json   (permissions.deny field)
  *   <home>/.claude/CLAUDE.md       (managed import block)
- *   <home>/.claude/harness/CONTEXT.md  (copy of reference context)
+ *   <home>/.claude/harness/CONTEXT.md  (embedded reference context)
  *
  * Exit codes (stable contract):
  *   0 — check: complete | apply: applied successfully
@@ -25,16 +25,17 @@
  * the shebang wrapper at the bottom calls process.exit(await main(...)).
  */
 
-import {
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  writeFileSync,
-} from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+
+// Reference data is EMBEDDED at build time via imports. This is what makes the
+// engine behave identically in soft mode (`bun run`) and as a compiled binary
+// (`bun build --compile`), where sidecar files are not present on disk. Reading
+// them from the filesystem instead would make the deny audit silently vacuous in
+// the compiled binary. (R10.3, ADR-0003)
+import refContextText from "../reference/CONTEXT.md" with { type: "text" };
+import refDenyData from "../reference/deny.json";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -67,7 +68,7 @@ export function resolveHome(env: Record<string, string | undefined>): string {
  * - Returns null if the JSON is invalid — caller handles the exit-2 path.
  */
 export function readJson(
-  path: string
+  path: string,
 ): Record<string, unknown> | null {
   if (!existsSync(path)) return {};
   const raw = readFileSync(path, "utf8").trim();
@@ -106,7 +107,7 @@ export function backup(path: string): void {
  */
 export function computeMissingDeny(
   refDeny: string[],
-  currentDeny: string[]
+  currentDeny: string[],
 ): string[] {
   return refDeny.filter((rule) => !currentDeny.includes(rule));
 }
@@ -164,7 +165,7 @@ export function report(missing: string[], importPresent: boolean): void {
   console.log(
     importPresent
       ? "  ✓ CLAUDE.md context: import present"
-      : `  ✗ CLAUDE.md context: import absent (${IMPORT_LINE})`
+      : `  ✗ CLAUDE.md context: import absent (${IMPORT_LINE})`,
   );
 }
 
@@ -178,7 +179,7 @@ export function report(missing: string[], importPresent: boolean): void {
  */
 export async function main(
   mode: string,
-  env: Record<string, string | undefined> = {}
+  env: Record<string, string | undefined> = {},
 ): Promise<number> {
   const effectiveMode = mode || "check";
 
@@ -195,19 +196,9 @@ export async function main(
   const harnessDir = join(claudeDir, "harness");
   const contextDestPath = join(harnessDir, "CONTEXT.md");
 
-  // Reference dir is relative to this engine file (Design §3)
-  const here = dirname(fileURLToPath(import.meta.url));
-  const refDir = join(here, "..", "reference");
-  const refDenyPath = join(refDir, "deny.json");
-  const refContextPath = join(refDir, "CONTEXT.md");
-
-  // Read reference deny rules
-  const refSettings = readJson(refDenyPath);
-  if (refSettings === null) {
-    console.error(`Error: invalid JSON in reference deny file: ${refDenyPath}`);
-    return 2;
-  }
-  const refDeny = (refSettings["deny"] as string[] | undefined) ?? [];
+  // Reference deny rules — embedded at build time (see imports above), so this
+  // is identical whether run with `bun run` or as a compiled binary. (R10.3)
+  const refDeny = (refDenyData as { deny?: string[]; }).deny ?? [];
 
   // Read current state
   const currentSettings = readJson(settingsPath);
@@ -238,16 +229,16 @@ export async function main(
     const updatedSettings = {
       ...currentSettings,
       permissions: {
-        ...(currentSettings["permissions"] as Record<string, unknown> | undefined ?? {}),
+        ...(currentSettings["permissions"] as Record<string, unknown> | undefined),
         deny: [...currentDeny, ...missingDeny],
       },
     };
     writeFileSync(settingsPath, JSON.stringify(updatedSettings, null, 2) + "\n", "utf8");
   }
 
-  // 2) Context file — copy reference to <home>/.claude/harness/CONTEXT.md (R2.2, R5.3)
+  // 2) Context file — write embedded reference to <home>/.claude/harness/CONTEXT.md (R2.2, R5.3)
   mkdirSync(harnessDir, { recursive: true });
-  copyFileSync(refContextPath, contextDestPath);
+  writeFileSync(contextDestPath, refContextText, "utf8");
 
   // 3) CLAUDE.md — ensure exactly one managed import block (R2.3, R3.2, R5.1)
   const newClaudeMd = ensureImportBlock(claudeMd);
@@ -256,8 +247,15 @@ export async function main(
     writeFileSync(claudeMdPath, newClaudeMd, "utf8");
   }
 
+  // Only the deny merge and the CLAUDE.md import block create backups; the
+  // managed context file is overwritten by design and is not backed up.
+  const backedUp: string[] = [];
+  if (missingDeny.length > 0) backedUp.push("settings.json");
+  if (newClaudeMd !== claudeMd) backedUp.push("CLAUDE.md");
   console.log(
-    "✓ Harness applied (backups .bak-… created for any modified file).\n"
+    backedUp.length > 0
+      ? `✓ Harness applied. Backups (.bak-…) created for: ${backedUp.join(", ")}.\n`
+      : "✓ Harness applied (no changes needed).\n",
   );
 
   const finalImportPresent = newClaudeMd.includes(IMPORT_LINE);

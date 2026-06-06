@@ -12,5 +12,8 @@
     "engine:check": "bun run plugins/jrobic-cc-harness-setup-example/scripts/harness-setup.ts check",
     "engine:apply": "bun run plugins/jrobic-cc-harness-setup-example/scripts/harness-setup.ts apply"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "dprint": "^0.54.0",
+    "oxlint": "^1.68.0"
+  }
 }

@@ -76,13 +76,13 @@ a full git URL + the standard credential helper) without naming any vendor.
 
 ### Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| An internal reference slips through de-internalisation | Medium | High | A dedicated de-internalisation task with a grep-based check in tasks.md; review gate before publish |
-| Readers expect turnkey private-CI auth | Low | Low | README states private auth/CA/token specifics are environment-dependent and out of scope for the example |
+| Risk                                                   | Likelihood | Impact | Mitigation                                                                                               |
+| ------------------------------------------------------ | ---------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| An internal reference slips through de-internalisation | Medium     | High   | A dedicated de-internalisation task with a grep-based check in tasks.md; review gate before publish      |
+| Readers expect turnkey private-CI auth                 | Low        | Low    | README states private auth/CA/token specifics are environment-dependent and out of scope for the example |
 
 ## References
 
-- CONTEXT.md — *Marketplace*, *Clone & go*
+- CONTEXT.md — _Marketplace_, _Clone & go_
 - ADR-0001 (repo-as-marketplace)
 - Brief: de-internalisation file-by-file map
