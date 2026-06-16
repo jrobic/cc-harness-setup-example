@@ -1,7 +1,10 @@
 {
   "name": "jrobic-cc-harness-setup-example",
   "version": "0.1.0",
-  "author": "jrobic",
+  "author": {
+    "name": "jrobic",
+    "url": "https://github.com/jrobic"
+  },
   "description": "Example harness plugin for Claude Code. Merges a deny list into settings.json, copies a team context file into ~/.claude/harness/CONTEXT.md, and ensures a managed import block in CLAUDE.md. All writes require explicit developer confirmation.",
   "license": "MIT",
   "engines": {

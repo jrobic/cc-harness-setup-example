@@ -1,7 +1,9 @@
 {
   "name": "cc-harness-setup-example",
   "description": "Example Claude Code harness: deny list, context import, and team tooling in one command.",
-  "owner": "jrobic",
+  "owner": {
+    "name": "jrobic"
+  },
   "plugins": [
     {
       "name": "jrobic-cc-harness-setup-example",
