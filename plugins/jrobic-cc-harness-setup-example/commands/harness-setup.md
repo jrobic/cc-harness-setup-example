@@ -14,7 +14,9 @@ plugins directory:
 ```bash
 SCRIPT="${CLAUDE_PLUGIN_ROOT:+$CLAUDE_PLUGIN_ROOT/scripts/harness-setup.ts}"
 if [ -z "$SCRIPT" ] || [ ! -f "$SCRIPT" ]; then
-  SCRIPT="$(find "$HOME/.claude/plugins" -name harness-setup.ts 2>/dev/null | head -1)"
+  # Resolve the plugins directory from CLAUDE_CONFIG_DIR when set (isolated/demo
+  # homes), falling back to ~/.claude for a normal install.
+  SCRIPT="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins" -name harness-setup.ts 2>/dev/null | head -1)"
 fi
 if [ -z "$SCRIPT" ] || [ ! -f "$SCRIPT" ]; then
   echo "ERROR: harness-setup.ts engine not found. Is the plugin installed?" >&2
@@ -33,12 +35,18 @@ bun run "$SCRIPT" check
 - Exit code `3` → configuration is incomplete. Continue to Step 3.
 - Exit code `2` → usage or JSON error. Report the error output and stop.
 
+The engine prints the **resolved home** it operates on, e.g.
+`Harness — configuration status (home: /Users/you/.claude)`. **Surface that exact
+path to the user** so they can confirm which config is being audited (this matters
+for isolated/demo homes).
+
 ## Step 3 — Present gaps and ask for confirmation
 
-Show the user clearly:
+Show the user clearly, using the **home path the engine reported** (do not assume
+`~/.claude` — it may be an isolated home):
 
-- Which `deny` rules are missing from `~/.claude/settings.json → permissions.deny`
-- Whether the context import line is absent from `~/.claude/CLAUDE.md`
+- Which `deny` rules are missing from `<home>/settings.json → permissions.deny`
+- Whether the context import line is absent from `<home>/CLAUDE.md`
 
 Then ask: **"Apply these changes? (yes / no)"**
 
@@ -53,11 +61,12 @@ If the user confirms:
 bun run "$SCRIPT" apply
 ```
 
-Then present the summary from the engine output. Make clear:
+Then present the summary from the engine output. Make clear (use the resolved
+`<home>` the engine reported, not a hardcoded `~/.claude`):
 
 - Backup files (`.bak-<timestamp>`) were created for every modified file.
 - Only the three target files were touched:
-  `~/.claude/settings.json`, `~/.claude/CLAUDE.md`, `~/.claude/harness/CONTEXT.md`
+  `<home>/settings.json`, `<home>/CLAUDE.md`, `<home>/harness/CONTEXT.md`
 - No other content was changed.
 
 If the user declines or does not confirm, do not run `apply` and do not write anything.

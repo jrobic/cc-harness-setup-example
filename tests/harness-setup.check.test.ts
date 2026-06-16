@@ -10,7 +10,7 @@
  * Tests run against an isolated temp HOME via HARNESS_HOME (R7, R13.2).
  */
 
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
 import { writeFileSync } from "node:fs";
 import { main } from "../plugins/jrobic-cc-harness-setup-example/scripts/harness-setup";
 import { createTmpHome } from "./helpers/tmp-home";
@@ -125,5 +125,19 @@ describe("check — exit codes", () => {
 
     const code = await main("", { HARNESS_HOME: tmp.home });
     expect(code).toBe(0);
+  });
+
+  it("reports the resolved home in the check output (isolation visibility)", async () => {
+    const tmp = createTmpHome();
+    const lines: string[] = [];
+    const spy = spyOn(console, "log").mockImplementation((...args: unknown[]) => {
+      lines.push(args.join(" "));
+    });
+    try {
+      await main("check", { HARNESS_HOME: tmp.home });
+    } finally {
+      spy.mockRestore();
+    }
+    expect(lines.join("\n")).toContain(`(home: ${tmp.home}/.claude)`);
   });
 });

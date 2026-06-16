@@ -152,8 +152,12 @@ export function ensureImportBlock(claudeMd: string): string {
 /**
  * Prints an audit summary to stdout.
  */
-export function report(missing: string[], importPresent: boolean): void {
-  console.log("Harness — configuration status\n");
+export function report(missing: string[], importPresent: boolean, targetDir?: string): void {
+  console.log(
+    targetDir
+      ? `Harness — configuration status (home: ${targetDir})\n`
+      : "Harness — configuration status\n",
+  );
   if (missing.length === 0) {
     console.log("  ✓ deny list: up to date");
   } else {
@@ -216,7 +220,7 @@ export async function main(
 
   // --- CHECK ---------------------------------------------------------------
   if (effectiveMode === "check") {
-    report(missingDeny, importPresent);
+    report(missingDeny, importPresent, claudeDir);
     return missingDeny.length === 0 && importPresent ? 0 : 3;
   }
 
@@ -259,7 +263,7 @@ export async function main(
   );
 
   const finalImportPresent = newClaudeMd.includes(IMPORT_LINE);
-  report([], finalImportPresent);
+  report([], finalImportPresent, claudeDir);
 
   return 0;
 }

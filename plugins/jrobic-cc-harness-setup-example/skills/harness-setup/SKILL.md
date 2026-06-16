@@ -22,7 +22,8 @@ following flow. **Never write anything without explicit user confirmation.**
 ```bash
 SCRIPT="${CLAUDE_PLUGIN_ROOT:+$CLAUDE_PLUGIN_ROOT/scripts/harness-setup.ts}"
 if [ -z "$SCRIPT" ] || [ ! -f "$SCRIPT" ]; then
-  SCRIPT="$(find "$HOME/.claude/plugins" -name harness-setup.ts 2>/dev/null | head -1)"
+  # CLAUDE_CONFIG_DIR covers isolated/demo homes; fall back to ~/.claude.
+  SCRIPT="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins" -name harness-setup.ts 2>/dev/null | head -1)"
 fi
 if [ -z "$SCRIPT" ] || [ ! -f "$SCRIPT" ]; then
   echo "ERROR: harness-setup.ts engine not found. Is the plugin installed?" >&2
@@ -40,12 +41,17 @@ bun run "$SCRIPT" check
 - Exit `3` → incomplete. Proceed to step 3.
 - Exit `2` → error. Report and stop.
 
+The engine prints the **resolved home** it audits, e.g.
+`Harness — configuration status (home: /Users/you/.claude)`. Surface that path so
+the user knows which config is being touched (it may be an isolated/demo home).
+
 ### 3. Present gaps and request confirmation
 
-Show the user:
+Show the user (using the home path the engine reported, not a hardcoded
+`~/.claude`):
 
-- Missing `deny` rules (from `~/.claude/settings.json`)
-- Whether the context import line is absent from `~/.claude/CLAUDE.md`
+- Missing `deny` rules (from `<home>/settings.json`)
+- Whether the context import line is absent from `<home>/CLAUDE.md`
 
 Ask for explicit confirmation before any write.
 
@@ -62,8 +68,8 @@ bun run "$SCRIPT" apply
 After apply, present the summary. Confirm that:
 
 - `.bak-<timestamp>` backups were created for every modified file.
-- Only the three target files were touched:
-  `~/.claude/settings.json`, `~/.claude/CLAUDE.md`, `~/.claude/harness/CONTEXT.md`
+- Only the three target files were touched (under the resolved `<home>`):
+  `<home>/settings.json`, `<home>/CLAUDE.md`, `<home>/harness/CONTEXT.md`
 - Nothing else was changed.
 
 If the user declines, do not run `apply` and do not write anything.
