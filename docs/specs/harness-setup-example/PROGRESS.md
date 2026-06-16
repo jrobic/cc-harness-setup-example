@@ -61,6 +61,19 @@ enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
   home (`... (home: <dir>)`); the command/skill locate the engine under
   `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins` and stop hardcoding `~/.claude`
   in user-facing text. Regression test added → **36 tests pass**.
+- **Confirm prompt → `AskUserQuestion`:** the command + skill now ask for
+  confirmation through the structured `AskUserQuestion` tool (options **Apply** /
+  **Cancel**) instead of free-text "yes/no", with a typed-confirmation fallback
+  for headless runs.
+- **Visible demo MCP (`example` server):** the Datadog-only `.mcp.json` showed
+  nothing in `/mcp` — an `http` server with an unset `${DATADOG_MCP_URL}`
+  silently fails (Claude Code doesn't resolve the empty var) and never appears.
+  Added a second server, **`example`** =
+  `@modelcontextprotocol/server-everything` (stdio via `npx`, **no auth**), which
+  connects out of the box so `/mcp` visibly shows a live MCP with example tools.
+  Verified locally via a real `initialize` + `tools/list` handshake (13 tools).
+  Datadog stays as the realistic "needs `/ddsetup`" example. Pre-warm tip added
+  to the demo runbook.
 
 ### Phase 2 backlog (not yet built)
 

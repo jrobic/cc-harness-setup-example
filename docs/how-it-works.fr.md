@@ -3,8 +3,8 @@
 Version française de [`how-it-works.md`](how-it-works.md).
 
 Une visite guidée du harness : les trois couches, le flux `check → apply`, la
-précédence des scopes, le knob soft/hardened, et la couche outillage (serveur
-MCP Datadog + skills adossés à des CLI). Les termes en **gras** sont définis dans
+précédence des scopes, le knob soft/hardened, et la couche outillage (serveurs
+MCP + skills adossés à des CLI). Les termes en **gras** sont définis dans
 [`CONTEXT.md`](../CONTEXT.md).
 
 ---
@@ -38,8 +38,8 @@ flowchart TD
 > guidance dont on peut détourner l'agent par l'argumentation.
 
 Ce dépôt livre les trois : les règles deny (`reference/deny.json`), l'outillage
-du plugin (commands, skill, hook, **et un serveur MCP Datadog** — §5), et le
-gabarit de contexte (`reference/CONTEXT.md`).
+du plugin (commands, skill, hook, **et des serveurs MCP** — §5), et le gabarit de
+contexte (`reference/CONTEXT.md`).
 
 ---
 
@@ -153,6 +153,7 @@ délibéré :
 ```mermaid
 flowchart LR
     subgraph PLUG[".mcp.json (couche outillage)"]
+        E["example<br/>stdio · npx · sans auth"]
         D["datadog<br/>type: http · OAuth"]
     end
     subgraph SKILLS["skills/ (prévus)"]
@@ -160,22 +161,41 @@ flowchart LR
         A["aws → CLI aws"]
     end
 
-    D -. "${DATADOG_MCP_URL} non défini" .-> DE["déclaré, non connecté<br/>(l'OAuth se déclenche à la 1re utilisation)"]
+    E --> EC["/mcp : ✓ connecté<br/>(tools d'exemple : echo, get-env, …)"]
+    D -. "${DATADOG_MCP_URL} non défini" .-> DE["échoue en silence → absent de /mcp<br/>(définir l'endpoint pour connecter)"]
 
+    classDef ok fill:#e7f6e7,stroke:#3a9b3a,color:#1f5f1f;
     classDef skel fill:#f4f4f4,stroke:#999,color:#555,stroke-dasharray: 4 3;
     classDef plan fill:#fff7e6,stroke:#c98a00,color:#7a5300,stroke-dasharray: 4 3;
+    class EC ok
     class DE skel
     class G,A plan
 ```
 
-### MCP Datadog (le seul vrai serveur)
-
 Le [`.mcp.json`](../plugins/jrobic-cc-harness-setup-example/.mcp.json) du plugin
-déclare le **serveur MCP Datadog officiel** — transport HTTP, **OAuth au
-runtime**, donc aucune clé d'API n'est jamais commitée. L'endpoint est
+déclare **deux** serveurs MCP — un qui connecte tout seul (pour la démo) et un
+exemple réaliste qui demande une config par utilisateur.
+
+### `example` — un MCP vivant, sans identifiant
+
+Le serveur `example` est le **serveur de référence MCP** officiel
+(`@modelcontextprotocol/server-everything`), lancé via `npx` en stdio, **sans
+auth**. Il connecte immédiatement, donc `/mcp` montre un MCP fonctionnel et ses
+tools d'exemple (`echo`, `get-env`, `get-sum`, …). C'est un **placeholder pour
+illustrer la couche outillage** — remplace-le par tes vrais serveurs.
+
+> Astuce démo live : préchauffe-le une fois pour que la 1re connexion ne soit pas
+> un téléchargement npm : `npx -y @modelcontextprotocol/server-everything`
+> (Ctrl-C une fois démarré).
+
+### MCP Datadog (exemple réaliste, à configurer)
+
+Le plugin déclare aussi le **serveur MCP Datadog officiel** — transport HTTP,
+**OAuth au runtime**, donc aucune clé d'API n'est jamais commitée. L'endpoint est
 **spécifique à l'organisation/au site** ; ce dépôt le laisse en
-`${DATADOG_MCP_URL}` (non défini → apparaît dans `/mcp` comme
-déclaré-mais-non-connecté, l'état de démo).
+`${DATADOG_MCP_URL}`. **Variable non définie, Claude Code ne peut pas résoudre
+l'URL vide et le serveur échoue en silence — il n'apparaît _pas_ dans `/mcp`.**
+C'est attendu : c'est un placeholder à configurer, pas un bug.
 
 **Chemin recommandé — le plugin officiel de Datadog** (remplit l'endpoint, lance
 l'OAuth) :

@@ -86,11 +86,19 @@ claude plugin install jrobic-cc-harness-setup-example
 # 4. Apply the minimal harness
 /harness-setup
 #   → check (exit 3) → presents missing deny rules + absent import
-#   → confirm → apply → re-check (exit 0)
+#   → confirm (AskUserQuestion: Apply / Cancel) → apply → re-check (exit 0)
+
+# 5. (optional) show the tooling layer
+/mcp        # the `example` MCP server is connected, with its tools
 ```
 
 Closing message: **the developer starts from this minimum and then adds their own
 plugins / skills / MCP servers.**
+
+> **Pre-warm the MCP before presenting** so the first `/mcp` isn't an npm
+> download: `npx -y @modelcontextprotocol/server-everything` (Ctrl-C once it
+> starts). The `datadog` server stays hidden until `DATADOG_MCP_URL` is set —
+> that's expected (see [`how-it-works.md` §5](how-it-works.md#5-tooling-mcp-servers-and-clis)).
 
 ---
 

@@ -93,24 +93,28 @@ Nothing is written without your agreement. Every modified file gets a backup.
 
 ---
 
-## Tooling layer: MCP server + CLIs
+## Tooling layer: MCP servers + CLIs
 
-The tooling layer mixes mechanisms by what fits the target:
+The plugin's [`.mcp.json`](plugins/jrobic-cc-harness-setup-example/.mcp.json)
+declares two MCP servers, and the tooling layer mixes mechanisms by what fits the
+target:
 
-- **Datadog → MCP server.** The plugin's
-  [`.mcp.json`](plugins/jrobic-cc-harness-setup-example/.mcp.json) declares the
-  **official Datadog MCP server** (HTTP transport, **OAuth at runtime** — no API
-  key committed). The endpoint is org/site-specific, left as `${DATADOG_MCP_URL}`;
-  unset, it shows in `/mcp` as declared-but-unconnected. Easiest path is
-  Datadog's own plugin: `/plugin install datadog@claude-plugins-official` then
-  `/ddsetup`.
+- **`example` → a live MCP, no credentials.** The official MCP reference server
+  (`@modelcontextprotocol/server-everything`), stdio over `npx`, no auth. It
+  connects out of the box, so `/mcp` visibly shows a working MCP with example
+  tools — a placeholder to demonstrate the layer; swap it for your real servers.
+- **`datadog` → a realistic example (needs setup).** The official Datadog MCP
+  server (HTTP, **OAuth at runtime** — no key committed). The endpoint is
+  org/site-specific, left as `${DATADOG_MCP_URL}`; **unset, it silently fails and
+  does _not_ appear in `/mcp`** (expected — it's a needs-setup placeholder).
+  Easiest path: `/plugin install datadog@claude-plugins-official` then `/ddsetup`.
 - **GitLab & AWS → CLI + skill (planned).** `glab` and the `aws` CLI already
   cover the ground, so these will be wrapped as **skills over the CLI** rather
   than MCP servers (not built in this phase).
 
 See [`docs/how-it-works.md` §5](docs/how-it-works.md#5-tooling-mcp-servers-and-clis)
-for the rationale (when to use an MCP server vs a CLI-backed skill) and the
-Datadog setup details.
+for the rationale (when to use an MCP server vs a CLI-backed skill) and setup
+details.
 
 ---
 
@@ -203,7 +207,7 @@ plugins/jrobic-cc-harness-setup-example/
   commands/harness-setup.md     /harness-setup command (EN, confirm-before-write)
   skills/harness-setup/SKILL.md ambient skill (setup/configure/verify/audit intents)
   hooks/hooks.json              SessionStart nudge hook
-  .mcp.json                     Datadog MCP server (official, OAuth — no keys)
+  .mcp.json                     MCP servers: example (live, no auth) + datadog (needs setup)
   scripts/harness-setup.ts      THE ENGINE — idempotent check/apply, zero deps
   reference/deny.json           source of truth for deny rules
   reference/CONTEXT.md          team context template (copied into ~/.claude/harness/)

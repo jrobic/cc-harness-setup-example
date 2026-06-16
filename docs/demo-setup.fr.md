@@ -85,11 +85,20 @@ claude plugin install jrobic-cc-harness-setup-example
 # 4. Appliquer le harness minimal
 /harness-setup
 #   → check (exit 3) → présente deny manquantes + import absent
-#   → confirme → apply → re-check (exit 0)
+#   → confirme (AskUserQuestion : Apply / Cancel) → apply → re-check (exit 0)
+
+# 5. (optionnel) montrer la couche outillage
+/mcp        # le serveur MCP `example` est connecté, avec ses tools
 ```
 
 Message de clôture : **le dev part de ce minimum et ajoute ensuite ses propres
 plugins / skills / MCP.**
+
+> **Préchauffe le MCP avant de présenter** pour que le 1er `/mcp` ne soit pas un
+> téléchargement npm : `npx -y @modelcontextprotocol/server-everything` (Ctrl-C
+> une fois démarré). Le serveur `datadog` reste invisible tant que
+> `DATADOG_MCP_URL` n'est pas défini — c'est attendu (voir
+> [`how-it-works.fr.md` §5](how-it-works.fr.md#5-outillage--serveurs-mcp-et-cli)).
 
 ---
 
