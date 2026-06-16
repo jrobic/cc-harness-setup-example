@@ -1,4 +1,9 @@
 {
-  "_note": "Phase 2 placeholder — MCP server declarations will be added here in Phase 2. See CONTEXT.md §Plugin for the format.",
-  "mcpServers": {}
+  "_note": "Demo tooling layer — ONE real MCP server: Datadog (official, OAuth over HTTP, no committed secret). GitLab and AWS are deliberately NOT MCP servers: their CLIs (glab, aws) already cover the ground and will be wrapped as skills later (see docs/how-it-works.md §5). The Datadog endpoint is org/site-specific — set DATADOG_MCP_URL from `/ddsetup` or your Datadog site's docs (GovCloud unsupported). With it unset the server shows in /mcp as declared-but-unconnected. Recommended alternative to this manual block: install Datadog's own plugin via `/plugin install datadog@claude-plugins-official` then `/ddsetup`, which auto-fills the endpoint and runs the OAuth flow.",
+  "mcpServers": {
+    "datadog": {
+      "type": "http",
+      "url": "${DATADOG_MCP_URL}"
+    }
+  }
 }
