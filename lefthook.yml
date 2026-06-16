@@ -1,0 +1,22 @@
+# Local git hooks (lefthook v2). Installed by `lefthook install`, run automatically
+# on `bun install` via the package.json "prepare" script. These enforce the
+# conventional commits and quality gates that the CI release (semantic-release)
+# depends on. See https://lefthook.dev/configuration/
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: bunx commitlint --edit {1}
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: dprint
+      run: bunx dprint check
+    - name: oxlint
+      run: bunx oxlint
+
+pre-push:
+  jobs:
+    - name: test
+      run: bun test

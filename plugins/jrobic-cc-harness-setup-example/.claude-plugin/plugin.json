@@ -1,6 +1,7 @@
 {
   "name": "jrobic-cc-harness-setup-example",
-  "_versionNote": "version intentionally omitted so installs track the git commit SHA — every push to main is picked up by `/plugin marketplace update`. Pin a semver here when cutting a stable release.",
+  "version": "0.1.0",
+  "_versionNote": "managed by semantic-release (CI on push to main, see .github/workflows/release.yml) from conventional commits — do not bump by hand.",
   "author": {
     "name": "jrobic",
     "url": "https://github.com/jrobic"
