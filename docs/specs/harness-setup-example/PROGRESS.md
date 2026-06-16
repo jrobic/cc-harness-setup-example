@@ -83,6 +83,30 @@ enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
   marketplace remove + re-add to pull this change, then `update` works going
   forward.)
 
+### Release automation (branch `build/release-automation`, not yet merged)
+
+Decided to do versioning **properly via CI** rather than a local push hook
+(semantic-release needs commits already on `main`, creates tags/releases, needs a
+token → its home is CI, not a `pre-push` hook). This **reverses** the earlier
+"drop version / track SHA" choice — `version` is back in `plugin.json`, now
+auto-managed.
+
+- **CI** — [`.github/workflows/release.yml`](../../../.github/workflows/release.yml):
+  on push to `main`, runs the quality gate then **semantic-release** (Node
+  runtime) → bumps `package.json` + `plugin.json` (via `scripts/sync-version.mjs`),
+  writes `CHANGELOG.md`, tags `vX.Y.Z`, creates a GitHub release, commits back
+  `[skip ci]`. Config in [`.releaserc.json`](../../../.releaserc.json).
+- **Local hygiene** — `lefthook.yml` + `.commitlintrc.json`: `commit-msg` →
+  commitlint, `pre-commit` → dprint + oxlint, `pre-push` → bun test. Installed
+  automatically by the `prepare` script on `bun install`.
+- **Docs** — [`CONTRIBUTING.md`](../../../CONTRIBUTING.md): conventional-commit →
+  release-type table, hooks, branching, the baseline-tag seeding step.
+- **Caveat** — semantic-release only releases on `feat`/`fix`/breaking; `docs`/
+  `chore`/etc. do **not** bump. Behaviour changes (engine/command/skill/.mcp.json/
+  deny.json) must be `feat`/`fix`. Seed `v0.1.0` once so the first release
+  continues from 0.1.0 (else it jumps to 1.0.0). Verified locally: commitlint
+  accept/reject, `sync-version.mjs`, 36 tests, dprint/oxlint clean.
+
 ### Phase 2 backlog (not yet built)
 
 - `skills/gitlab/` — skill wrapping `glab` (MRs, pipelines, issues).

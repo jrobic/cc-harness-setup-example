@@ -225,6 +225,7 @@ docker/Dockerfile               demo image (engine-only + full live flow)
 ## Further reading
 
 - [`docs/how-it-works.md`](docs/how-it-works.md) — architecture walk-through with diagrams (three layers, check/apply flow, scope precedence, soft/hardened, MCP servers) · 🇫🇷 [version française](docs/how-it-works.fr.md)
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — conventional commits, local hooks (Lefthook), and automated releases (semantic-release in CI)
 - [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)
 - [`docs/infographic-brief.md`](docs/infographic-brief.md) — onboarding infographic brief (ready-to-paste prompt for Claude Design)
 - [`CONTEXT.md`](CONTEXT.md) — domain glossary (harness, three layers, deny vs context, etc.)
