@@ -1,6 +1,10 @@
 {
-  "_note": "Demo tooling layer — ONE real MCP server: Datadog (official, OAuth over HTTP, no committed secret). GitLab and AWS are deliberately NOT MCP servers: their CLIs (glab, aws) already cover the ground and will be wrapped as skills later (see docs/how-it-works.md §5). The Datadog endpoint is org/site-specific — set DATADOG_MCP_URL from `/ddsetup` or your Datadog site's docs (GovCloud unsupported). With it unset the server shows in /mcp as declared-but-unconnected. Recommended alternative to this manual block: install Datadog's own plugin via `/plugin install datadog@claude-plugins-official` then `/ddsetup`, which auto-fills the endpoint and runs the OAuth flow.",
+  "_note": "Tooling-layer demo with TWO MCP servers. (1) 'example' — the official MCP reference server (@modelcontextprotocol/server-everything), stdio over npx, NO auth: it connects out of the box, so `/mcp` visibly shows a live MCP with example tools (echo, get-env, get-sum, …). It is a placeholder to demonstrate the tooling layer — swap it for your real servers. Pre-warm with `npx -y @modelcontextprotocol/server-everything` before a live demo so the first connect isn't a download. (2) 'datadog' — a realistic example (official Datadog MCP, HTTP + OAuth). The endpoint is org/site-specific: set DATADOG_MCP_URL via `/ddsetup` or your site's docs. With it UNSET, Claude Code cannot resolve the empty ${DATADOG_MCP_URL} and the server silently fails to connect — it will NOT appear in `/mcp`. That is expected: it is a needs-setup placeholder. GitLab and AWS are deliberately NOT MCP servers — their CLIs (glab, aws) cover the ground and will become skills later. No secret is ever committed here.",
   "mcpServers": {
+    "example": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"]
+    },
     "datadog": {
       "type": "http",
       "url": "${DATADOG_MCP_URL}"

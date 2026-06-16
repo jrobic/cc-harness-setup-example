@@ -48,14 +48,19 @@ Show the user clearly, using the **home path the engine reported** (do not assum
 - Which `deny` rules are missing from `<home>/settings.json → permissions.deny`
 - Whether the context import line is absent from `<home>/CLAUDE.md`
 
-Then ask: **"Apply these changes? (yes / no)"**
+Then **confirm with a structured prompt**: call the **`AskUserQuestion`** tool with
+a single question ("Apply these harness changes?") and two options —
+**Apply** (merge the deny rules and write the context import) and **Cancel**
+(do nothing). Do not accept free-text yes/no. Proceed to Step 4 **only** if the
+user selects **Apply**. If `AskUserQuestion` is unavailable (e.g. a headless /
+print-mode run), fall back to an explicit typed confirmation.
 
 **Strict rule:** never invent a deny rule. The only source of truth is
 `reference/deny.json` inside the plugin (the engine reads it directly).
 
 ## Step 4 — Apply (only after explicit confirmation)
 
-If the user confirms:
+If the user selected **Apply**:
 
 ```bash
 bun run "$SCRIPT" apply

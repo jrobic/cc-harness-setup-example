@@ -53,13 +53,19 @@ Show the user (using the home path the engine reported, not a hardcoded
 - Missing `deny` rules (from `<home>/settings.json`)
 - Whether the context import line is absent from `<home>/CLAUDE.md`
 
-Ask for explicit confirmation before any write.
+**Confirm with a structured prompt:** call the **`AskUserQuestion`** tool with one
+question ("Apply these harness changes?") and two options — **Apply** and
+**Cancel** — rather than free-text. Apply only if the user selects **Apply**. Fall
+back to an explicit typed confirmation if `AskUserQuestion` is unavailable
+(headless/print mode).
 
 **Never invent deny rules.** The source of truth is `reference/deny.json`
 inside the plugin. The engine reads it directly — do not duplicate or
 modify the rule list manually.
 
 ### 4. Apply after confirmation
+
+Only if the user selected **Apply**:
 
 ```bash
 bun run "$SCRIPT" apply
