@@ -75,6 +75,14 @@ enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
   Datadog stays as the realistic "needs `/ddsetup`" example. Pre-warm tip added
   to the demo runbook.
 
+- **Plugin updates pinned by version:** during iteration, `/plugin marketplace
+  update` reported "already up to date" because `plugin.json` pinned
+  `"version": "0.1.0"` (unchanged across commits). Fix: **removed `version`** so
+  installs track the **git commit SHA** — every push to `main` is now detected as
+  an update. Re-pin a semver when cutting a stable release. (One-time: do a full
+  marketplace remove + re-add to pull this change, then `update` works going
+  forward.)
+
 ### Phase 2 backlog (not yet built)
 
 - `skills/gitlab/` — skill wrapping `glab` (MRs, pipelines, issues).
