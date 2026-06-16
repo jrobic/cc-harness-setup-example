@@ -4,8 +4,68 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-06 (session 2 — reviewed)
-**Current phase:** Phase 1 COMPLETE — reviewed (REQUEST_CHANGES → F1–F5 fixed) & re-verified
+**Last updated:** 2026-06-16 (session 3 — demo enhancements)
+**Current phase:** Phase 1 COMPLETE & promoted to `main`; Phase 2 demo
+enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
+
+## Phase 2 — demo enhancements (session 3, 2026-06-16)
+
+- Repo promoted: `main` is now the default branch (no PR — repo genesis); the
+  redundant `feat/phase1-oss-skeleton` branch was deleted.
+- **Tooling layer split (decided 2026-06-16, user):**
+  - **Datadog → MCP server.** Plugin `.mcp.json` declares the **official Datadog
+    MCP** (`type: http`, OAuth at runtime, no committed secret). Endpoint is
+    org/site-specific, left as `${DATADOG_MCP_URL}` (unset → declared-but-
+    unconnected in `/mcp`). Recommended install path is Datadog's own plugin
+    (`/plugin install datadog@claude-plugins-official` + `/ddsetup`).
+  - **GitLab & AWS → CLI + skill (NOT built yet).** `glab` and the `aws` CLI
+    already cover the ground, so these will be **skills wrapping the CLI**, not
+    MCP servers. Planned for a later session under `plugins/.../skills/`.
+  - Earlier idea (GitLab/AWS/Datadog all as `npx`/`uvx` MCP skeletons) was
+    dropped in favour of this split.
+- **`docs/how-it-works.md`** (+ **FR** `how-it-works.fr.md`) — architecture
+  walk-through with 6 Mermaid diagrams (three layers, plugin vs out-of-plugin
+  writes, check/apply sequence, scope precedence, tooling MCP-vs-CLI split,
+  soft/hardened).
+- **`docs/infographic-brief.md`** — onboarding infographic brief (new MacBook →
+  install Claude → add plugin → `/harness-setup`). Now carries **3 paste-ready
+  aesthetic variants** for A/B testing in Claude Design: **A — Plasma** (warm
+  paper, terracotta accent `#D97757` / sage future `#788C5D`, Inter + JetBrains
+  Mono, adopted from the user's Plasma infographic), **B — hand-drawn notebook**
+  (Caveat + mono), **C — dark mode tech** (IDE/terminal, cyan accent). Content
+  shared: install panel includes **Bun** (engine prereq); guardrail hooks
+  (PreToolUse secret-leak / denied commands) shown as **roadmap/future**, never
+  an applied tick (honesty).
+- **`docs/demo-setup.md`** (+ **FR** `demo-setup.fr.md`) — demo runbook: alias
+  launching Claude Code in a fresh isolated state (`CLAUDE_CONFIG_DIR` +
+  `HARNESS_HOME` aligned on `~/claude-demo`), live walk-through, isolation check,
+  reset, Keychain auth note. EN primary for the OSS, FR variant alongside.
+- **Framing locked (user, 2026-06-16):** the harness is the **team's minimal
+  baseline** installed in one command; the dev/devops then **adds their own
+  plugins/skills/MCP** on top. "harness" and "guardrails" are apt terms;
+  "secured" was too strong and was dropped. End goal of the guardrails =
+  **hooks** that detect secret leaks / block denied commands (future phase).
+- README updated (tooling section, Further reading links, repo structure).
+- Gate: `bun test` 35/35, `oxlint` 0, `dprint check` clean.
+
+### Live demo findings + fixes (2026-06-16, pushed to `main`)
+
+- **`fix(manifests)` (commit `8fb3b90`):** `marketplace.json` `owner` and
+  `plugin.json` `author` must be JSON **objects**, not strings — the string form
+  failed `/plugin marketplace add` with "expected object, received string".
+- **`fix(engine)` (commit `82c2fec`):** during the demo it was unclear whether the
+  engine targeted the real `~/.claude` or the isolated demo home. Root cause: in
+  the sandboxed demo session `$HOME` itself was overridden to `~/claude-demo`
+  (not `HARNESS_HOME`), so `os.homedir()` correctly pointed at the demo dir —
+  isolation held, but invisibly. Fixes: `check`/`apply` now print the resolved
+  home (`... (home: <dir>)`); the command/skill locate the engine under
+  `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins` and stop hardcoding `~/.claude`
+  in user-facing text. Regression test added → **36 tests pass**.
+
+### Phase 2 backlog (not yet built)
+
+- `skills/gitlab/` — skill wrapping `glab` (MRs, pipelines, issues).
+- `skills/aws/` — skill wrapping the `aws` CLI (scoped, read-first).
 
 ---
 

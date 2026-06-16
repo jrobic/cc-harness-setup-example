@@ -93,6 +93,27 @@ Nothing is written without your agreement. Every modified file gets a backup.
 
 ---
 
+## Tooling layer: MCP server + CLIs
+
+The tooling layer mixes mechanisms by what fits the target:
+
+- **Datadog → MCP server.** The plugin's
+  [`.mcp.json`](plugins/jrobic-cc-harness-setup-example/.mcp.json) declares the
+  **official Datadog MCP server** (HTTP transport, **OAuth at runtime** — no API
+  key committed). The endpoint is org/site-specific, left as `${DATADOG_MCP_URL}`;
+  unset, it shows in `/mcp` as declared-but-unconnected. Easiest path is
+  Datadog's own plugin: `/plugin install datadog@claude-plugins-official` then
+  `/ddsetup`.
+- **GitLab & AWS → CLI + skill (planned).** `glab` and the `aws` CLI already
+  cover the ground, so these will be wrapped as **skills over the CLI** rather
+  than MCP servers (not built in this phase).
+
+See [`docs/how-it-works.md` §5](docs/how-it-works.md#5-tooling-mcp-servers-and-clis)
+for the rationale (when to use an MCP server vs a CLI-backed skill) and the
+Datadog setup details.
+
+---
+
 ## Soft vs hardened mode
 
 The engine ships in two modes, controlled by a build knob:
@@ -182,6 +203,7 @@ plugins/jrobic-cc-harness-setup-example/
   commands/harness-setup.md     /harness-setup command (EN, confirm-before-write)
   skills/harness-setup/SKILL.md ambient skill (setup/configure/verify/audit intents)
   hooks/hooks.json              SessionStart nudge hook
+  .mcp.json                     Datadog MCP server (official, OAuth — no keys)
   scripts/harness-setup.ts      THE ENGINE — idempotent check/apply, zero deps
   reference/deny.json           source of truth for deny rules
   reference/CONTEXT.md          team context template (copied into ~/.claude/harness/)
@@ -198,6 +220,9 @@ docker/Dockerfile               demo image (engine-only + full live flow)
 
 ## Further reading
 
+- [`docs/how-it-works.md`](docs/how-it-works.md) — architecture walk-through with diagrams (three layers, check/apply flow, scope precedence, soft/hardened, MCP servers) · 🇫🇷 [version française](docs/how-it-works.fr.md)
+- [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)
+- [`docs/infographic-brief.md`](docs/infographic-brief.md) — onboarding infographic brief (ready-to-paste prompt for Claude Design)
 - [`CONTEXT.md`](CONTEXT.md) — domain glossary (harness, three layers, deny vs context, etc.)
 - [`docs/adr/`](docs/adr/) — architecture decision records (ADR-0001..0004)
 - [`docs/specs/harness-setup-example/`](docs/specs/harness-setup-example/) — requirements, design, tasks
