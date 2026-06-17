@@ -1,6 +1,6 @@
 {
   "name": "jrobic-cc-harness-setup-example",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Example harness for Claude Code: deny list, context import, and team tooling in one command.",
   "type": "module",
   "repository": {

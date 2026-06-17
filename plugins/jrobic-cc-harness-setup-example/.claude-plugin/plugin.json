@@ -1,6 +1,6 @@
 {
   "name": "jrobic-cc-harness-setup-example",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "_versionNote": "managed by semantic-release (CI on push to main, see .github/workflows/release.yml) from conventional commits — do not bump by hand.",
   "author": {
     "name": "jrobic",
