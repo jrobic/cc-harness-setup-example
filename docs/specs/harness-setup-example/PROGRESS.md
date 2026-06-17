@@ -4,10 +4,11 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-16 (session 5 — release automation merged)
-**Current phase:** Phase 1 + Phase 2 demo enhancements + release automation all
-on `main`. Repo at a clean, complete, presentation-ready baseline (tag `v0.1.0`).
-Next work = Phase 2 backlog (gitlab/aws CLI-wrapping skills), not yet started.
+**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1)
+**Current phase:** Phase 1 + Phase 2 demo + release automation on `main` (tag
+`v0.1.0`). **Guardrail hooks Lot 1 BUILT** on branch `feat/phase2-guardrails`
+(ported from the user's global hooks + 2 new hooks; 388 tests, gate clean) —
+pending commit/PR. See NEXT STEPS for the shipped list.
 
 ## Phase 2 — demo enhancements (session 3, 2026-06-16)
 
@@ -293,19 +294,44 @@ Full tooling survey + verdict: [`phase2-tooling.md`](./phase2-tooling.md)
 (Skill|MCP|Hook rule, two-baseline model public-skeleton vs private-fork,
 second-brain layer, guardrails plan).
 
-**ACTIVE — Guardrail hooks, Lot 1 (decided 2026-06-17):** public baseline, five
-behaviours / four hook scripts — (1) deny-runtime + destructive-gate **merged**
-(one PreToolUse/Bash, 2 tiers: `deny`/`ask` — re-checking the settings `deny`
-globs in a hook is redundant; real value = command-CONTENT analysis +
-pre-`/harness-setup` coverage), (2) secret-leak (PreToolUse Write/Edit + push),
-(3) injection-scan (PostToolUse Read/WebFetch + UserPromptSubmit; heuristics +
-optional Prompt Guard 2; layered with the gates, not a replacement), (4) linters
-auto (hadolint/shellcheck/actionlint, graceful skip). `feat:` → first triggers
-v0.2.0. Detail + tool survey: [`phase2-tooling.md`](./phase2-tooling.md).
+**BUILT — Guardrail hooks, Lot 1 (2026-06-17, branch `feat/phase2-guardrails`).**
+**Pivot:** instead of the from-scratch starter, we **ported the user's
+battle-tested global hooks** (`~/.claude/hooks`) and de-internalized them
+(DRY/AHA — far more mature, tested against known bypasses). Then extended with
+the genuinely-new pieces. Shipped (public baseline):
 
-Deferred:
+- `scripts/_shared/hook-lib.ts` — `runHook` harness (deny/ask, 0o600 rotated
+  logs, fail-open, `readStringField`). Ported.
+- `scripts/guard-command.ts` (PreToolUse Bash) — deny destruction / exfiltration
+  / escalation; **git-by-inversion** ask (SAFE_GIT allowlist → everything else
+  ask). Ported. Supersedes the merged deny+destructive starter.
+- `scripts/guard-secret.ts` (PreToolUse Read/Edit/Write/MultiEdit/NotebookEdit/
+  Grep/Glob/Bash) — deny secret-file reads, 14 PathRules + Bash path tokenization
+  - URL-creds + git-leak, symlink-resolved. Ported. Richer than static `deny.json`.
+- `scripts/guard-write-secret.ts` (PreToolUse Write/Edit/MultiEdit) — **NEW** —
+  deny hardcoded secret VALUES before write (8 high-signal token shapes; regex,
+  fast). Write-side complement to guard-secret's read-side.
+- `scripts/guard-prompt.ts` (UserPromptSubmit) — **NEW** (the global set lacked
+  it; IMPROVEMENTS #5) — warn on injection signatures via `additionalContext`,
+  non-blocking by design.
+- `docs/THREAT_MODEL.md` — de-internalized; documents the static (`deny.json`) vs
+  dynamic (hooks) two-layer model, what's defended / known bypasses.
+- `lefthook.yml` pre-commit — conditional `gitleaks protect --staged` (deep net;
+  skips cleanly if gitleaks absent). `.gitignore += *.log`.
+- `hooks/hooks.json` wires all four (timeout 5s each).
 
+Contract verified via `claude-code-guide`: PreToolUse `permissionDecision`
+deny/ask, allow = silent; UserPromptSubmit `additionalContext` on exit 0; all
+fail-open. **Gate: 388 tests pass, oxlint + dprint + de-internalization grep all
+clean.** `feat:` → triggers **v0.2.0**.
+
+Deferred (not in Lot 1):
+
+- **linters-auto** (hadolint/shellcheck/actionlint PostToolUse) — dropped from
+  Lot 1 (hygiene < security; the port took priority). Easy follow-up.
 - IaC gate (Trivy/Checkov, P2) + policy gate (conftest/OPA, P3) — private fork.
+- Optional escalations: Prompt Guard 2 model (injection), gitleaks-everywhere.
+- README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).
 - `skills/gitlab/` (`glab`) + `skills/aws/` (`aws` CLI) — private fork infra.
 - Second brain (qmd/graphify/claude-mem) + efficiency (caveman/rtk) — private fork.
 - Hardened mode post-install (ADR-0003); Managed/MDM promotion.

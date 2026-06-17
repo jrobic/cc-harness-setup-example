@@ -127,6 +127,17 @@ Public baseline, first build batch — **five behaviours across four hook script
 Deferred to private fork / later: IaC gate (Trivy/Checkov, P2), policy gate
 (conftest/OPA, P3). All Lot 1 = `feat:` commits → the first triggers **v0.2.0**.
 
+> **BUILT 2026-06-17 — pivot.** Inspecting the user's global `~/.claude/hooks`
+> revealed a far more mature, bypass-tested set. We **ported & de-internalized**
+> it instead of shipping the from-scratch starter (DRY/AHA): `guard-command`
+> (deny + git-by-inversion ask), `guard-secret` (read-block, 14 rules, symlink),
+> `_shared/hook-lib`. Added NEW: `guard-write-secret` (write-side) and
+> `guard-prompt` (UserPromptSubmit injection warn — the global set lacked it).
+>
+> - `docs/THREAT_MODEL.md`, gitleaks at pre-commit. **388 tests, gate clean.**
+>   `linters-auto` dropped from this lot (hygiene < security) — easy follow-up.
+>   See `PROGRESS.md` for the full shipped list.
+
 ---
 
 ## Second brain & efficiency layer — private-fork baseline
