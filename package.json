@@ -24,7 +24,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
-    "@types/node": "24.13.1",
+    "@types/node": "24",
     "dprint": "^0.54.0",
     "lefthook": "^2.1.9",
     "oxlint": "^1.68.0",

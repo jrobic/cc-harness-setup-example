@@ -2,3 +2,4 @@ dist/
 *.bak-*
 node_modules/
 .serena
+*.log

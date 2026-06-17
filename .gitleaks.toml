@@ -1,0 +1,17 @@
+# gitleaks configuration for cc-harness-setup-example.
+#
+# Uses the full default ruleset, then allowlists the SYNTHETIC secret shapes that
+# the guardrail tests use as fixtures (AWS/GitHub/Slack/Stripe token shapes, a
+# dummy private-key header, a fake JWT). These are not live credentials — they
+# exist so `guard-write-secret` / `guard-secret` can be tested — but they trip
+# gitleaks by design, so the repo's own secret scan must skip these files.
+title = "cc-harness-setup-example"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic secret fixtures in the guardrail test suite (not live credentials)"
+paths = [
+  '''tests/guard-.*\.test\.ts''',
+]

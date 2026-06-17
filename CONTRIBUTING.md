@@ -24,7 +24,8 @@ Installed automatically on `bun install` (the `prepare` script runs
 `lefthook install`). They run:
 
 - **commit-msg** → `commitlint` (validates the message)
-- **pre-commit** → `dprint check` + `oxlint`
+- **pre-commit** → `dprint check` + `oxlint` + `gitleaks protect --staged` (deep
+  secret scan; skipped automatically if `gitleaks` isn't installed)
 - **pre-push** → `bun test`
 
 Run them manually with `bunx lefthook run pre-commit`. Skip in an emergency with

@@ -15,6 +15,11 @@ pre-commit:
       run: bunx dprint check
     - name: oxlint
       run: bunx oxlint
+    # Secret scan on staged content (deep / entropy-based net, complements the
+    # regex guard-write-secret hook). Skips cleanly if gitleaks is not installed
+    # so contributors without it are not blocked; a real finding still fails.
+    - name: gitleaks
+      run: if command -v gitleaks >/dev/null 2>&1; then gitleaks protect --staged --redact --no-banner; else echo "gitleaks not installed — skipping staged secret scan (brew install gitleaks)"; fi
 
 pre-push:
   jobs:

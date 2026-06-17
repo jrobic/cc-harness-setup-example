@@ -4,9 +4,12 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-16 (session 3 — demo enhancements)
-**Current phase:** Phase 1 COMPLETE & promoted to `main`; Phase 2 demo
-enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
+**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1)
+**Current phase:** Phase 1 + Phase 2 demo + release automation on `main` (tag
+`v0.1.0`). **Guardrail hooks Lot 1 BUILT & pushed** — branch
+`feat/phase2-guardrails` (commit `c5228f7`), **PR #2 open**, CI green, reviewer
+APPROVE. 390 tests, gate clean. Merge → semantic-release cuts **v0.2.0**. See
+NEXT STEPS for the shipped list.
 
 ## Phase 2 — demo enhancements (session 3, 2026-06-16)
 
@@ -83,7 +86,12 @@ enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
   marketplace remove + re-add to pull this change, then `update` works going
   forward.)
 
-### Release automation (branch `build/release-automation`, not yet merged)
+### Release automation — MERGED to `main` (PR #1 `1e6a43b`, session 5, 2026-06-16)
+
+> Status update: this layer is now **live on `main`**, baseline tag `v0.1.0`
+> seeded. CI `release.yml` + `ci.yml` present; `lefthook.yml`, `.commitlintrc.json`,
+> `.releaserc.json`, `scripts/sync-version.mjs`, `CONTRIBUTING.md` all in place.
+> Next `feat:` → `v0.2.0`, next `fix:` → `v0.1.1` (semantic-release on push).
 
 Decided to do versioning **properly via CI** rather than a local push hook
 (semantic-release needs commits already on `main`, creates tags/releases, needs a
@@ -108,6 +116,11 @@ auto-managed.
   accept/reject, `sync-version.mjs`, 36 tests, dprint/oxlint clean.
 
 ### Phase 2 backlog (not yet built)
+
+> Full tooling survey + Skill/MCP/Hook verdict for every DevOps tool considered:
+> [`phase2-tooling.md`](./phase2-tooling.md). The harness's real differentiator
+> is the **guardrail hooks layer**, not the CLI wrappers — recommended first
+> build = secret-leak + deny-runtime hooks.
 
 - `skills/gitlab/` — skill wrapping `glab` (MRs, pipelines, issues).
 - `skills/aws/` — skill wrapping the `aws` CLI (scoped, read-first).
@@ -273,16 +286,57 @@ Harness — configuration status
 
 ## NEXT STEPS
 
-**Phase 1 BUILD complete + reviewer findings addressed (F1–F5).** Ready for
-re-review / commit. 35 tests pass, oxlint + dprint clean.
+**Baseline complete & on `main`** — Phase 1 skeleton + Phase 2 demo enhancements
+(MCP `example`/Datadog, `AskUserQuestion` confirm, how-it-works/demo/infographic
+docs) + release automation (semantic-release, lefthook, commitlint) all merged.
+Tag `v0.1.0`. Nothing in flight; repo is at a clean, presentation-ready state.
 
-Potential Phase 2 items (out of scope for Phase 1):
+Full tooling survey + verdict: [`phase2-tooling.md`](./phase2-tooling.md)
+(Skill|MCP|Hook rule, two-baseline model public-skeleton vs private-fork,
+second-brain layer, guardrails plan).
 
-- Real business hooks/skills/agents/MCP
-- Managed/MDM promotion for the enforcement layer
-- Populate `.mcp.json` with real MCP server declarations
-- Make hardened mode work post-install (copy/locate the binary next to the
-  installed plugin, or ship a per-platform binary) — currently a repo-local demo
+**BUILT — Guardrail hooks, Lot 1 (2026-06-17, branch `feat/phase2-guardrails`).**
+**Pivot:** instead of the from-scratch starter, we **ported the user's
+battle-tested global hooks** (`~/.claude/hooks`) and de-internalized them
+(DRY/AHA — far more mature, tested against known bypasses). Then extended with
+the genuinely-new pieces. Shipped (public baseline):
+
+- `scripts/_shared/hook-lib.ts` — `runHook` harness (deny/ask, 0o600 rotated
+  logs, fail-open, `readStringField`). Ported.
+- `scripts/guard-command.ts` (PreToolUse Bash) — deny destruction / exfiltration
+  / escalation; **git-by-inversion** ask (SAFE_GIT allowlist → everything else
+  ask). Ported. Supersedes the merged deny+destructive starter.
+- `scripts/guard-secret.ts` (PreToolUse Read/Edit/Write/MultiEdit/NotebookEdit/
+  Grep/Glob/Bash) — deny secret-file reads, 14 PathRules + Bash path tokenization
+  - URL-creds + git-leak, symlink-resolved. Ported. Richer than static `deny.json`.
+- `scripts/guard-write-secret.ts` (PreToolUse Write/Edit/MultiEdit) — **NEW** —
+  deny hardcoded secret VALUES before write (8 high-signal token shapes; regex,
+  fast). Write-side complement to guard-secret's read-side.
+- `scripts/guard-prompt.ts` (UserPromptSubmit) — **NEW** (the global set lacked
+  it; IMPROVEMENTS #5) — warn on injection signatures via `additionalContext`,
+  non-blocking by design.
+- `docs/THREAT_MODEL.md` — de-internalized; documents the static (`deny.json`) vs
+  dynamic (hooks) two-layer model, what's defended / known bypasses.
+- `lefthook.yml` pre-commit — conditional `gitleaks protect --staged` (deep net;
+  skips cleanly if gitleaks absent). `.gitignore += *.log`.
+- `hooks/hooks.json` wires all four (timeout 5s each).
+
+Contract verified via `claude-code-guide`: PreToolUse `permissionDecision`
+deny/ask, allow = silent; UserPromptSubmit `additionalContext` on exit 0; all
+fail-open. **Gate: 388 tests pass, oxlint + dprint + de-internalization grep all
+clean.** `feat:` → triggers **v0.2.0**.
+
+Deferred (not in Lot 1):
+
+- **linters-auto** (hadolint/shellcheck/actionlint PostToolUse) — dropped from
+  Lot 1 (hygiene < security; the port took priority). Easy follow-up.
+- IaC gate (Trivy/Checkov, P2) + policy gate (conftest/OPA, P3) — private fork.
+- Optional escalations: Prompt Guard 2 model (injection), gitleaks-everywhere.
+- README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).
+- `skills/gitlab/` (`glab`) + `skills/aws/` (`aws` CLI) — private fork infra.
+- Second brain (qmd/graphify/claude-mem) + efficiency (caveman/rtk) — private fork.
+- Hardened mode post-install (ADR-0003); Managed/MDM promotion.
+- 2 ADRs to write: 0005 (Skill|MCP|Hook), 0006 (public-skeleton vs private-fork).
 
 ## Open questions — RESOLVED (2026-06-06, user)
 

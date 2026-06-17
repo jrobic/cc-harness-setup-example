@@ -118,6 +118,27 @@ details.
 
 ---
 
+## Guardrail hooks
+
+Beyond the static deny list, the plugin ships four **guardrail hooks** that run
+automatically (while the plugin is enabled) and intervene **before** a risky tool
+call:
+
+| Guard                | Behaviour           | Protects against                                                                                                                                                            |
+| -------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `guard-command`      | **block** / **ask** | destructive commands (`rm -rf /`, disk wipes, fork bombs), exfiltration (`curl … \| bash`, uploads), escalation (`sudo`, setuid); **asks** before history-rewriting git ops |
+| `guard-secret`       | **block**           | reading secret files (`.env`, SSH/PGP keys, `~/.aws/credentials`, Terraform state, …), symlinks resolved                                                                    |
+| `guard-write-secret` | **block**           | writing a hardcoded secret value (AWS key, GitHub PAT, private key, …) into a file                                                                                          |
+| `guard-prompt`       | **warn**            | prompt-injection signatures in submitted/pasted text                                                                                                                        |
+
+**Defense in depth, not a sandbox** — string-matching hooks are bypassable by
+shell obfuscation and don't cover MCP tools. See
+[`docs/guardrails.md`](docs/guardrails.md) (🇫🇷 [FR](docs/guardrails.fr.md)) for
+behaviour and limits, and [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) for the
+full model.
+
+---
+
 ## Soft vs hardened mode
 
 The engine ships in two modes, controlled by a build knob:
@@ -225,6 +246,8 @@ docker/Dockerfile               demo image (engine-only + full live flow)
 ## Further reading
 
 - [`docs/how-it-works.md`](docs/how-it-works.md) — architecture walk-through with diagrams (three layers, check/apply flow, scope precedence, soft/hardened, MCP servers) · 🇫🇷 [version française](docs/how-it-works.fr.md)
+- [`docs/guardrails.md`](docs/guardrails.md) — the guardrail hooks: what they do, what they protect, how they behave (block / ask / warn) · 🇫🇷 [version française](docs/guardrails.fr.md)
+- [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) — what is and isn't defended, known bypasses, trust assumptions
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — conventional commits, local hooks (Lefthook), and automated releases (semantic-release in CI)
 - [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)
 - [`docs/infographic-brief.md`](docs/infographic-brief.md) — onboarding infographic brief (ready-to-paste prompt for Claude Design)
