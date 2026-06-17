@@ -4,9 +4,10 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-16 (session 3 — demo enhancements)
-**Current phase:** Phase 1 COMPLETE & promoted to `main`; Phase 2 demo
-enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
+**Last updated:** 2026-06-16 (session 5 — release automation merged)
+**Current phase:** Phase 1 + Phase 2 demo enhancements + release automation all
+on `main`. Repo at a clean, complete, presentation-ready baseline (tag `v0.1.0`).
+Next work = Phase 2 backlog (gitlab/aws CLI-wrapping skills), not yet started.
 
 ## Phase 2 — demo enhancements (session 3, 2026-06-16)
 
@@ -83,7 +84,12 @@ enhancements in progress on `feat/phase2-mcp-demo-docs` (MCP skeletons + docs)
   marketplace remove + re-add to pull this change, then `update` works going
   forward.)
 
-### Release automation (branch `build/release-automation`, not yet merged)
+### Release automation — MERGED to `main` (PR #1 `1e6a43b`, session 5, 2026-06-16)
+
+> Status update: this layer is now **live on `main`**, baseline tag `v0.1.0`
+> seeded. CI `release.yml` + `ci.yml` present; `lefthook.yml`, `.commitlintrc.json`,
+> `.releaserc.json`, `scripts/sync-version.mjs`, `CONTRIBUTING.md` all in place.
+> Next `feat:` → `v0.2.0`, next `fix:` → `v0.1.1` (semantic-release on push).
 
 Decided to do versioning **properly via CI** rather than a local push hook
 (semantic-release needs commits already on `main`, creates tags/releases, needs a
@@ -108,6 +114,11 @@ auto-managed.
   accept/reject, `sync-version.mjs`, 36 tests, dprint/oxlint clean.
 
 ### Phase 2 backlog (not yet built)
+
+> Full tooling survey + Skill/MCP/Hook verdict for every DevOps tool considered:
+> [`phase2-tooling.md`](./phase2-tooling.md). The harness's real differentiator
+> is the **guardrail hooks layer**, not the CLI wrappers — recommended first
+> build = secret-leak + deny-runtime hooks.
 
 - `skills/gitlab/` — skill wrapping `glab` (MRs, pipelines, issues).
 - `skills/aws/` — skill wrapping the `aws` CLI (scoped, read-first).
@@ -273,16 +284,32 @@ Harness — configuration status
 
 ## NEXT STEPS
 
-**Phase 1 BUILD complete + reviewer findings addressed (F1–F5).** Ready for
-re-review / commit. 35 tests pass, oxlint + dprint clean.
+**Baseline complete & on `main`** — Phase 1 skeleton + Phase 2 demo enhancements
+(MCP `example`/Datadog, `AskUserQuestion` confirm, how-it-works/demo/infographic
+docs) + release automation (semantic-release, lefthook, commitlint) all merged.
+Tag `v0.1.0`. Nothing in flight; repo is at a clean, presentation-ready state.
 
-Potential Phase 2 items (out of scope for Phase 1):
+Full tooling survey + verdict: [`phase2-tooling.md`](./phase2-tooling.md)
+(Skill|MCP|Hook rule, two-baseline model public-skeleton vs private-fork,
+second-brain layer, guardrails plan).
 
-- Real business hooks/skills/agents/MCP
-- Managed/MDM promotion for the enforcement layer
-- Populate `.mcp.json` with real MCP server declarations
-- Make hardened mode work post-install (copy/locate the binary next to the
-  installed plugin, or ship a per-platform binary) — currently a repo-local demo
+**ACTIVE — Guardrail hooks, Lot 1 (decided 2026-06-17):** public baseline, five
+behaviours / four hook scripts — (1) deny-runtime + destructive-gate **merged**
+(one PreToolUse/Bash, 2 tiers: `deny`/`ask` — re-checking the settings `deny`
+globs in a hook is redundant; real value = command-CONTENT analysis +
+pre-`/harness-setup` coverage), (2) secret-leak (PreToolUse Write/Edit + push),
+(3) injection-scan (PostToolUse Read/WebFetch + UserPromptSubmit; heuristics +
+optional Prompt Guard 2; layered with the gates, not a replacement), (4) linters
+auto (hadolint/shellcheck/actionlint, graceful skip). `feat:` → first triggers
+v0.2.0. Detail + tool survey: [`phase2-tooling.md`](./phase2-tooling.md).
+
+Deferred:
+
+- IaC gate (Trivy/Checkov, P2) + policy gate (conftest/OPA, P3) — private fork.
+- `skills/gitlab/` (`glab`) + `skills/aws/` (`aws` CLI) — private fork infra.
+- Second brain (qmd/graphify/claude-mem) + efficiency (caveman/rtk) — private fork.
+- Hardened mode post-install (ADR-0003); Managed/MDM promotion.
+- 2 ADRs to write: 0005 (Skill|MCP|Hook), 0006 (public-skeleton vs private-fork).
 
 ## Open questions — RESOLVED (2026-06-06, user)
 
