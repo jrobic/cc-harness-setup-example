@@ -9,7 +9,8 @@
   "excludes": [
     "dist/",
     "node_modules/",
-    "**/*.bak-*"
+    "**/*.bak-*",
+    "CHANGELOG.md"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.93.0.wasm",
