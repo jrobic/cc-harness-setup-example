@@ -1,9 +1,0 @@
-{
-  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.schemas/settings.schema.json",
-  "extraKnownMarketplaces": [
-    {
-      "label": "harness-setup-example",
-      "githubRepo": "jrobic/cc-harness-setup-example"
-    }
-  ]
-}

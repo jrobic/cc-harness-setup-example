@@ -18,7 +18,7 @@
  *   3 — check: configuration incomplete (missing deny rule and/or import)
  *
  * Home resolution (R7):
- *   1. HARNESS_HOME env var if set (isolation override for tests / Docker)
+ *   1. HARNESS_HOME env var if set (isolation override for tests / isolated demos)
  *   2. os.homedir() otherwise
  *
  * The engine is designed so main() returns the exit code (testable in-process);
@@ -52,7 +52,7 @@ export const END = "<!-- END harness -->";
 /**
  * Resolves the target home directory from the environment.
  * If HARNESS_HOME is set, uses that; otherwise falls back to os.homedir().
- * This is the single seam that makes tests and Docker demos safe.
+ * This is the single seam that makes tests and isolated demos safe.
  */
 export function resolveHome(env: Record<string, string | undefined>): string {
   return env["HARNESS_HOME"] ?? homedir();

@@ -286,6 +286,14 @@ Harness — configuration status
 
 ## NEXT STEPS
 
+**Cleanup (2026-06-17):** removed `docker/`, `.devcontainer/`, and
+`examples/clone-and-go/`. The local-alias demo (`docs/demo-setup.md`) covers the
+demo need, so the Docker image + devcontainer were dead weight — this **reverses
+OQ-5 / R12.3 / T-g** ("CLI in the Docker image" live-flow decision). Also fixed
+the root `.claude/settings.json` to the correct `extraKnownMarketplaces` schema
+(object keyed by name + `source: { source: "github", repo }`, `$schema` →
+schemastore); `examples/clone-and-go` was a redundant, wrong-schema copy of it.
+
 **Baseline complete & on `main`** — Phase 1 skeleton + Phase 2 demo enhancements
 (MCP `example`/Datadog, `AskUserQuestion` confirm, how-it-works/demo/infographic
 docs) + release automation (semantic-release, lefthook, commitlint) all merged.
