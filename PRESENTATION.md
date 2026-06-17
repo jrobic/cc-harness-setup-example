@@ -102,7 +102,7 @@ Show `.claude/settings.json`:
 Trust the folder → Claude Code detects the marketplace → prompts to install.
 One `git clone`, no manual `claude plugin marketplace add`.
 
-The `examples/clone-and-go/` directory shows this minimal skeleton.
+The repo's own `.claude/settings.json` shows this minimal `extraKnownMarketplaces` skeleton.
 
 ---
 
@@ -158,25 +158,10 @@ HARNESS_HOME=/tmp/harness-demo \
 # → exit 0: complete
 ```
 
-**Step 2 — Docker engine-only demo (no auth needed):**
-
-```bash
-docker build -t harness-demo -f docker/Dockerfile . --no-cache
-docker run --rm harness-demo
-```
-
-**Step 3 — run the tests:**
+**Step 2 — run the tests:**
 
 ```bash
 bun test
-```
-
-**Step 4 (optional, if ANTHROPIC_API_KEY available) — full live flow:**
-
-```bash
-docker run --rm -it -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY harness-demo bash
-# inside: claude plugin marketplace add /app && claude plugin install jrobic-cc-harness-setup-example
-# then: claude → /harness-setup
 ```
 
 ---

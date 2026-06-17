@@ -101,3 +101,10 @@ is bounded by the Docker demo and clear install docs.
 - CONTEXT.md — _Engine_, _Soft vs hardened_
 - ADR-0003 (soft vs hardened compile knob)
 - Bun docs: `bun build --compile`, `bun test`
+
+## Update (2026-06-17) — Docker demo removed
+
+The Docker demo / devcontainer referenced above as a Bun-prerequisite mitigation
+was removed (the local-alias demo in `docs/demo-setup.md` covers the demo need).
+The Bun-prerequisite mitigation is now: README lists Bun as a prerequisite, and
+`docs/demo-setup.md` documents `bun install`.

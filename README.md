@@ -164,43 +164,6 @@ tamper-proof. (See [ADR-0003](docs/adr/0003-soft-vs-hardened-compile-knob.md).)
 
 ---
 
-## Docker demo
-
-The demo image runs the full `check → apply` cycle against an **isolated HOME**
-so your real `~/.claude` is never touched.
-
-### Engine-only demo (no auth required)
-
-```bash
-docker build -t harness-demo -f docker/Dockerfile .
-docker run --rm harness-demo
-```
-
-Expected output: `check` exits 3 (incomplete), `apply` merges the deny rules and
-writes the context import, second `check` exits 0 (complete).
-
-### Full live flow (requires ANTHROPIC_API_KEY)
-
-> Note: this flow depends on the Claude Code CLI being installed in the image.
-> The `docker/Dockerfile` installs `@anthropic-ai/claude-code` via npm, but the
-> CLI requires a valid `ANTHROPIC_API_KEY` at runtime. The engine-only demo above
-> works without any API key and demonstrates identical deny/context behaviour.
-
-```bash
-docker run --rm -it -e ANTHROPIC_API_KEY=sk-ant-... harness-demo bash
-# Inside the container:
-claude plugin marketplace add /app
-claude plugin install jrobic-cc-harness-setup-example
-claude   # then run /harness-setup
-```
-
-Auth is passed via env var at runtime. No API key is ever committed to this
-repository or baked into the image.
-
-See [`docker/README.md`](docker/README.md) for more details.
-
----
-
 ## Run the tests
 
 ```bash
@@ -236,8 +199,6 @@ scripts/
   build-hardened.ts             bun build --compile → dist/harness-setup
   set-mode.ts                   flip hook/command between soft and hardened
 tests/                          bun test suite (isolated HOME)
-docker/Dockerfile               demo image (engine-only + full live flow)
-.devcontainer/devcontainer.json thin devcontainer wrapper
 .github/workflows/ci.yml        CI: lint + format check + bun test
 ```
 

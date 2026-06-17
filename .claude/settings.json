@@ -1,8 +1,8 @@
 {
-  "extraKnownMarketplaces": [
-    {
-      "url": "https://github.com/jrobic/cc-harness-setup-example",
-      "description": "Example Claude Code harness: deny list + team context + tooling in one command."
+  "$schema": "https://www.schemastore.org/claude-code-settings.json",
+  "extraKnownMarketplaces": {
+    "cc-harness-setup-example": {
+      "source": { "source": "github", "repo": "jrobic/cc-harness-setup-example" }
     }
-  ]
+  }
 }

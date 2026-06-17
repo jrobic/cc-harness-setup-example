@@ -11,7 +11,7 @@
  * Cross-build targets (pass as first CLI argument):
  *   bun-darwin-arm64   macOS Apple Silicon
  *   bun-darwin-x64     macOS Intel
- *   bun-linux-x64      Linux x86-64 (CI / Docker)
+ *   bun-linux-x64      Linux x86-64 (CI / Linux)
  *   bun-linux-arm64    Linux ARM64
  *   bun-windows-x64    Windows x64 (experimental)
  *
