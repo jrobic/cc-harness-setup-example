@@ -6,9 +6,10 @@ and at the end of every session.
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
 **Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1)
 **Current phase:** Phase 1 + Phase 2 demo + release automation on `main` (tag
-`v0.1.0`). **Guardrail hooks Lot 1 BUILT** on branch `feat/phase2-guardrails`
-(ported from the user's global hooks + 2 new hooks; 388 tests, gate clean) —
-pending commit/PR. See NEXT STEPS for the shipped list.
+`v0.1.0`). **Guardrail hooks Lot 1 BUILT & pushed** — branch
+`feat/phase2-guardrails` (commit `c5228f7`), **PR #2 open**, CI green, reviewer
+APPROVE. 390 tests, gate clean. Merge → semantic-release cuts **v0.2.0**. See
+NEXT STEPS for the shipped list.
 
 ## Phase 2 — demo enhancements (session 3, 2026-06-16)
 
