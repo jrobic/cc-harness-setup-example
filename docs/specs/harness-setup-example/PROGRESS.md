@@ -4,12 +4,12 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1)
-**Current phase:** Phase 1 + Phase 2 demo + release automation on `main` (tag
-`v0.1.0`). **Guardrail hooks Lot 1 BUILT & pushed** — branch
-`feat/phase2-guardrails` (commit `c5228f7`), **PR #2 open**, CI green, reviewer
-APPROVE. 390 tests, gate clean. Merge → semantic-release cuts **v0.2.0**. See
-NEXT STEPS for the shipped list.
+**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1 → v0.2.0)
+**Current phase:** **Guardrail hooks Lot 1 SHIPPED** — merged via PR #2 and
+released as **v0.2.0** (tag `v0.2.0`, commit `b1705f9`; `plugin.json` bumped).
+The release pipeline was hardened along the way (PRs #3–#5) to push the bump
+commit past `main`'s signed-commit ruleset — see the Lot 1 entry in NEXT STEPS
+and `CONTRIBUTING.md` § Releases. 390 tests, reviewer APPROVE.
 
 ## Phase 2 — demo enhancements (session 3, 2026-06-16)
 

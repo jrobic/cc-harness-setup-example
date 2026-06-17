@@ -50,6 +50,24 @@ job will:
 3. update `CHANGELOG.md`, create the `vX.Y.Z` tag and a GitHub release,
 4. commit the bump back to `main` with `[skip ci]`.
 
+**How the bump commit reaches a protected `main`.** `main` enforces a ruleset
+requiring **verified signatures**, which a CI bot commit cannot satisfy. So the
+release pushes over **SSH using a write deploy key** listed in the ruleset's
+**bypass** list:
+
+- the deploy key's **private** key is the Actions secret `RELEASE_SSH_KEY`; its
+  public key is a repo **deploy key with write access**, and **Deploy keys** is
+  in the `main` ruleset's bypass list;
+- `release.yml` checks out with `ssh-key: ${{ secrets.RELEASE_SSH_KEY }}`;
+- `.releaserc.json` pins `repositoryUrl` to the **SSH** form — otherwise
+  semantic-release pushes over HTTPS with `GITHUB_TOKEN`, whose
+  `github-actions[bot]` actor a role-based bypass does **not** cover;
+- the Release step sets `LEFTHOOK=0` so the bot commit isn't gated by the local
+  pre-commit hooks.
+
+Trade-off: the `chore(release)` bump commit is **Unverified** (unsigned) —
+accepted so signed-commit enforcement stays on for human commits.
+
 Once released, the bumped `plugin.json` version is what `/plugin marketplace
 update` detects.
 
