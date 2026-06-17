@@ -47,3 +47,7 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Disable the local lefthook git hooks for semantic-release's own
+          # CHANGELOG/version commit — the bot commit must not be gated by the
+          # pre-commit dprint check (the generated CHANGELOG.md isn't formatted).
+          LEFTHOOK: "0"
