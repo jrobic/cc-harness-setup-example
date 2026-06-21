@@ -4,7 +4,7 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1 → v0.2.0)
+**Last updated:** 2026-06-21 (session 7 — docs reconciliation, branch `docs/reconcile-guardrails`)
 **Current phase:** **Guardrail hooks Lot 1 SHIPPED** — merged via PR #2 and
 released as **v0.2.0** (tag `v0.2.0`, commit `b1705f9`; `plugin.json` bumped).
 The release pipeline was hardened along the way (PRs #3–#5) to push the bump
@@ -340,7 +340,13 @@ Deferred (not in Lot 1):
   Lot 1 (hygiene < security; the port took priority). Easy follow-up.
 - IaC gate (Trivy/Checkov, P2) + policy gate (conftest/OPA, P3) — private fork.
 - Optional escalations: Prompt Guard 2 model (injection), gitleaks-everywhere.
-- README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).
+- ~~README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).~~
+  **DONE 2026-06-21** (branch `docs/reconcile-guardrails`, commits `6ef7252` +
+  `17fa2dd`): README repo-structure + test block refreshed (4 guards, hook-lib,
+  390 tests); how-it-works (EN/FR) gained a "Guardrail hooks" §6 (block/ask/warn
+  Mermaid + table + links to `guardrails.md` / `THREAT_MODEL.md`). Also removed
+  the dead `docs/infographic-brief.md` + its 5 cross-references (user decision).
+  Docs-only → no semantic-release bump. `dprint check` clean.
 - `skills/gitlab/` (`glab`) + `skills/aws/` (`aws` CLI) — private fork infra.
 - Second brain (qmd/graphify/claude-mem) + efficiency (caveman/rtk) — private fork.
 - Hardened mode post-install (ADR-0003); Managed/MDM promotion.
