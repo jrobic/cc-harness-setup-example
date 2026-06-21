@@ -3,9 +3,9 @@
 🇫🇷 Version française : [`how-it-works.fr.md`](how-it-works.fr.md).
 
 A visual walk-through of the harness: the three layers, the `check → apply`
-flow, scope precedence, the soft/hardened knob, and the tooling layer (MCP
-servers + CLI-backed skills). Terms in **bold** are defined in
-[`CONTEXT.md`](../CONTEXT.md).
+flow, scope precedence, the soft/hardened knob, the tooling layer (MCP
+servers + CLI-backed skills), and the runtime **guardrail hooks**. Terms in
+**bold** are defined in [`CONTEXT.md`](../CONTEXT.md).
 
 ---
 
@@ -218,7 +218,58 @@ developer already has authenticated (`glab auth status`, `aws sso login`).
 
 ---
 
-## 6. Soft vs hardened
+## 6. Guardrail hooks
+
+The deny list is **static** — a fixed set of rules merged into `settings.json`.
+On top of it, the plugin ships **guardrail hooks** that run **dynamically**,
+intervening _before_ a risky tool call (or, for the prompt guard, when text is
+submitted). This is the static→runtime step: the deny list draws the hard line,
+the hooks reason about the actual command, path, content, or prompt at call time.
+
+```mermaid
+flowchart TD
+    subgraph PRE["PreToolUse (blocking — runs before the tool)"]
+        GC["guard-command<br/>matcher: Bash"]
+        GS["guard-secret<br/>Read·Edit·Write·Grep·Glob·Bash"]
+        GW["guard-write-secret<br/>Write·Edit·MultiEdit"]
+    end
+    subgraph UPS["UserPromptSubmit (non-blocking)"]
+        GP["guard-prompt"]
+    end
+
+    GC -->|"destructive · exfil · escalation"| BLOCK["⛔ block"]
+    GC -->|"history-rewriting git"| ASK["❓ ask"]
+    GS -->|".env · keys · aws creds · tfstate"| BLOCK
+    GW -->|"hardcoded secret value"| BLOCK
+    GP -->|"injection signature"| WARN["⚠️ warn (additionalContext)"]
+
+    classDef block fill:#fde2e2,stroke:#c0392b,color:#7b1f1f;
+    classDef ask fill:#fff7e6,stroke:#c98a00,color:#7a5300;
+    classDef warn fill:#e2ecfd,stroke:#2c6fbb,color:#1f3a7b;
+    class BLOCK block
+    class ASK ask
+    class WARN warn
+```
+
+| Guard                | Decision            | Protects against                                                                                                                                                   |
+| -------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `guard-command`      | **block** / **ask** | destructive (`rm -rf /`, disk wipes, fork bombs), exfiltration (`curl … \| bash`, uploads), escalation (`sudo`, setuid); **asks** before history-rewriting git ops |
+| `guard-secret`       | **block**           | reading secret files (`.env`, SSH/PGP keys, `~/.aws/credentials`, Terraform state, …), symlinks resolved                                                           |
+| `guard-write-secret` | **block**           | writing a hardcoded secret value (AWS key, GitHub PAT, private key, …) into a file                                                                                 |
+| `guard-prompt`       | **warn**            | prompt-injection signatures in submitted/pasted text (non-blocking, via `additionalContext`)                                                                       |
+
+All four are **fail-open** (a hook error never blocks legitimate work) and log to
+rotated `0600` files via the shared `_shared/hook-lib.ts` harness.
+
+> **Defense in depth, not a sandbox.** String-matching guards are bypassable by
+> shell obfuscation and do **not** cover MCP tools. They complement — never
+> replace — the deny list and least-privilege scopes. See
+> [`guardrails.md`](guardrails.md) (🇫🇷 [FR](guardrails.fr.md)) for behaviour and
+> limits, and [`THREAT_MODEL.md`](THREAT_MODEL.md) for what is and isn't defended.
+
+---
+
+## 7. Soft vs hardened
 
 The engine ships in two modes, selected by a build knob.
 
@@ -244,6 +295,8 @@ flowchart TD
 ## See also
 
 - [`CONTEXT.md`](../CONTEXT.md) — domain glossary
+- [`guardrails.md`](guardrails.md) — the guardrail hooks: behaviour (block / ask / warn), what they protect, limits · 🇫🇷 [FR](guardrails.fr.md)
+- [`THREAT_MODEL.md`](THREAT_MODEL.md) — what is and isn't defended, known bypasses, trust assumptions
 - [`docs/adr/`](adr/) — architecture decision records
 - [`docs/infographic-brief.md`](infographic-brief.md) — onboarding infographic brief (for Claude Design)
 - [`README.md`](../README.md) — install paths and quick start
