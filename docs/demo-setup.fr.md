@@ -164,5 +164,4 @@ Dans les deux cas, l'alias isole la démo sans rien sauvegarder.
 
 - [`demo-setup.md`](demo-setup.md) — version anglaise (source)
 - [`how-it-works.md`](how-it-works.md) — architecture (FR : [`how-it-works.fr.md`](how-it-works.fr.md))
-- [`infographic-brief.md`](infographic-brief.md) — brief de l'infographie d'onboarding
 - [`../PRESENTATION.md`](../PRESENTATION.md) — talk track de la présentation

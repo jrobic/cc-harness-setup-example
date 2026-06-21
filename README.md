@@ -218,7 +218,6 @@ tests/                          bun test suite (isolated HOME)
 - [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) — what is and isn't defended, known bypasses, trust assumptions
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — conventional commits, local hooks (Lefthook), and automated releases (semantic-release in CI)
 - [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)
-- [`docs/infographic-brief.md`](docs/infographic-brief.md) — onboarding infographic brief (ready-to-paste prompt for Claude Design)
 - [`CONTEXT.md`](CONTEXT.md) — domain glossary (harness, three layers, deny vs context, etc.)
 - [`docs/adr/`](docs/adr/) — architecture decision records (ADR-0001..0004)
 - [`docs/specs/harness-setup-example/`](docs/specs/harness-setup-example/) — requirements, design, tasks

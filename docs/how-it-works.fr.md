@@ -312,5 +312,4 @@ flowchart TD
 - [`guardrails.md`](guardrails.md) — les guardrail hooks : comportement (bloque / demande / avertit), ce qu'ils protègent, limites · 🇫🇷 [FR](guardrails.fr.md)
 - [`THREAT_MODEL.md`](THREAT_MODEL.md) — ce qui est défendu ou non, contournements connus, hypothèses de confiance
 - [`docs/adr/`](adr/) — architecture decision records
-- [`docs/infographic-brief.md`](infographic-brief.md) — brief de l'infographie d'onboarding (pour Claude Design)
 - [`README.md`](../README.md) — chemins d'installation et démarrage rapide
