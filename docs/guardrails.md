@@ -73,3 +73,7 @@ is intentional):
 
 For the complete model — what is and isn't defended, trust assumptions, and where
 other defenses must live — see [`THREAT_MODEL.md`](./THREAT_MODEL.md).
+
+To read the code: every rule, regex, and the exact runtime flow is documented in
+[`guardrails-internals.md`](./guardrails-internals.md) (for anyone modifying or
+extending a guard).

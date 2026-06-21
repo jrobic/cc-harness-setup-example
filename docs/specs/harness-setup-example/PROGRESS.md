@@ -4,7 +4,7 @@ Single source of truth for "where we are". Update this on every task completion
 and at the end of every session.
 
 **Change:** harness-setup-example (Phase 1 — OSS skeleton)
-**Last updated:** 2026-06-17 (session 6 — guardrail hooks Lot 1 → v0.2.0)
+**Last updated:** 2026-06-21 (session 7 — docs reconciliation + guardrails internals reference, branch `docs/reconcile-guardrails`)
 **Current phase:** **Guardrail hooks Lot 1 SHIPPED** — merged via PR #2 and
 released as **v0.2.0** (tag `v0.2.0`, commit `b1705f9`; `plugin.json` bumped).
 The release pipeline was hardened along the way (PRs #3–#5) to push the bump
@@ -340,7 +340,24 @@ Deferred (not in Lot 1):
   Lot 1 (hygiene < security; the port took priority). Easy follow-up.
 - IaC gate (Trivy/Checkov, P2) + policy gate (conftest/OPA, P3) — private fork.
 - Optional escalations: Prompt Guard 2 model (injection), gitleaks-everywhere.
-- README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).
+- ~~README / how-it-works reconciliation (surface the hooks + link THREAT_MODEL).~~
+  **DONE 2026-06-21** (branch `docs/reconcile-guardrails`, commits `6ef7252` +
+  `17fa2dd`): README repo-structure + test block refreshed (4 guards, hook-lib,
+  390 tests); how-it-works (EN/FR) gained a "Guardrail hooks" §6 (block/ask/warn
+  Mermaid + table + links to `guardrails.md` / `THREAT_MODEL.md`). Also removed
+  the dead `docs/infographic-brief.md` + its 5 cross-references (user decision).
+  Docs-only → no semantic-release bump. `dprint check` clean.
+- **DONE 2026-06-21 — guardrails internals reference** (commit `de70181`): new
+  `docs/guardrails-internals.md` + `.fr.md` — code-level walk-through of all four
+  hooks for anyone modifying/extending a guard. Covers the `runHook` contract
+  (deny/ask via stdout, exit 0, fail-open, 0600 rotated logs) and every rule with
+  its regex (rm -rf logic, 18 BASH_RULES, git ask-by-inversion, 14 secret
+  PATH_RULES, 8 write-side SECRET_RULES, 6 prompt signatures), plus 4 Mermaid
+  diagrams (routing, runHook lifecycle, guard-command decision, guard-secret
+  dispatch), worked-example tables, an end-to-end trace, a how-to-add-a-rule
+  guide, and §3.5 on why MCP tools aren't covered (matcher + `inspect` default)
+  with the least-privilege mitigation. Linked from `guardrails.md` + README.
+  Docs-only.
 - `skills/gitlab/` (`glab`) + `skills/aws/` (`aws` CLI) — private fork infra.
 - Second brain (qmd/graphify/claude-mem) + efficiency (caveman/rtk) — private fork.
 - Hardened mode post-install (ADR-0003); Managed/MDM promotion.

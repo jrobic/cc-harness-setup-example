@@ -164,5 +164,4 @@ Either way, the alias isolates the demo without backing anything up.
 
 - [`demo-setup.fr.md`](demo-setup.fr.md) — French version
 - [`how-it-works.md`](how-it-works.md) — architecture (FR: [`how-it-works.fr.md`](how-it-works.fr.md))
-- [`infographic-brief.md`](infographic-brief.md) — onboarding infographic brief
 - [`../PRESENTATION.md`](../PRESENTATION.md) — presentation talk track

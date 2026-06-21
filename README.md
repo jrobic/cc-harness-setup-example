@@ -175,11 +175,13 @@ touch your real `~/.claude`.
 
 ```
 bun test v1.3.14
-tests/harness-setup.check.test.ts        [pass]
-tests/harness-setup.apply.test.ts        [pass]
-tests/harness-setup.idempotence.test.ts  [pass]
-tests/harness-setup.backup.test.ts       [pass]
-32 pass, 0 fail
+tests/harness-setup.*.test.ts            [pass]   engine: check/apply/idempotence/backup/hardened-parity
+tests/guard-command.test.ts              [pass]   guardrail hooks
+tests/guard-secret.test.ts               [pass]
+tests/guard-write-secret.test.ts         [pass]
+tests/guard-prompt.test.ts               [pass]
+tests/hook-lib.test.ts                   [pass]
+390 pass, 0 fail
 ```
 
 ---
@@ -190,9 +192,14 @@ tests/harness-setup.backup.test.ts       [pass]
 plugins/jrobic-cc-harness-setup-example/
   commands/harness-setup.md     /harness-setup command (EN, confirm-before-write)
   skills/harness-setup/SKILL.md ambient skill (setup/configure/verify/audit intents)
-  hooks/hooks.json              SessionStart nudge hook
+  hooks/hooks.json              SessionStart nudge + 4 guardrail hooks (PreToolUse/UserPromptSubmit)
   .mcp.json                     MCP servers: example (live, no auth) + datadog (needs setup)
   scripts/harness-setup.ts      THE ENGINE — idempotent check/apply, zero deps
+  scripts/guard-command.ts      PreToolUse/Bash: block destructive/exfil/escalation, ask on risky git
+  scripts/guard-secret.ts       PreToolUse: block reads of secret files (symlink-resolved)
+  scripts/guard-write-secret.ts PreToolUse: block writing hardcoded secret values
+  scripts/guard-prompt.ts       UserPromptSubmit: warn on prompt-injection signatures
+  scripts/_shared/hook-lib.ts   shared hook harness (deny/ask, rotated 0600 logs, fail-open)
   reference/deny.json           source of truth for deny rules
   reference/CONTEXT.md          team context template (copied into ~/.claude/harness/)
 scripts/
@@ -208,10 +215,10 @@ tests/                          bun test suite (isolated HOME)
 
 - [`docs/how-it-works.md`](docs/how-it-works.md) — architecture walk-through with diagrams (three layers, check/apply flow, scope precedence, soft/hardened, MCP servers) · 🇫🇷 [version française](docs/how-it-works.fr.md)
 - [`docs/guardrails.md`](docs/guardrails.md) — the guardrail hooks: what they do, what they protect, how they behave (block / ask / warn) · 🇫🇷 [version française](docs/guardrails.fr.md)
+- [`docs/guardrails-internals.md`](docs/guardrails-internals.md) — internals: every rule, regex, capture, and the runtime flow (for modifying/extending a guard) · 🇫🇷 [version française](docs/guardrails-internals.fr.md)
 - [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) — what is and isn't defended, known bypasses, trust assumptions
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — conventional commits, local hooks (Lefthook), and automated releases (semantic-release in CI)
 - [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)
-- [`docs/infographic-brief.md`](docs/infographic-brief.md) — onboarding infographic brief (ready-to-paste prompt for Claude Design)
 - [`CONTEXT.md`](CONTEXT.md) — domain glossary (harness, three layers, deny vs context, etc.)
 - [`docs/adr/`](docs/adr/) — architecture decision records (ADR-0001..0004)
 - [`docs/specs/harness-setup-example/`](docs/specs/harness-setup-example/) — requirements, design, tasks

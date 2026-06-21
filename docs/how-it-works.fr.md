@@ -3,9 +3,9 @@
 Version française de [`how-it-works.md`](how-it-works.md).
 
 Une visite guidée du harness : les trois couches, le flux `check → apply`, la
-précédence des scopes, le knob soft/hardened, et la couche outillage (serveurs
-MCP + skills adossés à des CLI). Les termes en **gras** sont définis dans
-[`CONTEXT.md`](../CONTEXT.md).
+précédence des scopes, le knob soft/hardened, la couche outillage (serveurs
+MCP + skills adossés à des CLI), et les **guardrail hooks** d'exécution. Les
+termes en **gras** sont définis dans [`CONTEXT.md`](../CONTEXT.md).
 
 ---
 
@@ -227,7 +227,61 @@ développeur a déjà authentifiée (`glab auth status`, `aws sso login`).
 
 ---
 
-## 6. Soft vs hardened
+## 6. Guardrail hooks
+
+La liste deny est **statique** — un jeu de règles fixe fusionné dans
+`settings.json`. Par-dessus, le plugin livre des **guardrail hooks** qui tournent
+**dynamiquement**, intervenant _avant_ un appel d'outil risqué (ou, pour le guard
+de prompt, à la soumission du texte). C'est l'étape statique→runtime : la liste
+deny trace la ligne dure, les hooks raisonnent sur la commande, le chemin, le
+contenu ou le prompt réels au moment de l'appel.
+
+```mermaid
+flowchart TD
+    subgraph PRE["PreToolUse (bloquant — avant l'outil)"]
+        GC["guard-command<br/>matcher : Bash"]
+        GS["guard-secret<br/>Read·Edit·Write·Grep·Glob·Bash"]
+        GW["guard-write-secret<br/>Write·Edit·MultiEdit"]
+    end
+    subgraph UPS["UserPromptSubmit (non bloquant)"]
+        GP["guard-prompt"]
+    end
+
+    GC -->|"destructif · exfil · escalation"| BLOCK["⛔ bloque"]
+    GC -->|"git réécrivant l'historique"| ASK["❓ demande"]
+    GS -->|".env · clés · creds aws · tfstate"| BLOCK
+    GW -->|"valeur de secret en dur"| BLOCK
+    GP -->|"signature d'injection"| WARN["⚠️ avertit (additionalContext)"]
+
+    classDef block fill:#fde2e2,stroke:#c0392b,color:#7b1f1f;
+    classDef ask fill:#fff7e6,stroke:#c98a00,color:#7a5300;
+    classDef warn fill:#e2ecfd,stroke:#2c6fbb,color:#1f3a7b;
+    class BLOCK block
+    class ASK ask
+    class WARN warn
+```
+
+| Guard                | Décision                 | Protège contre                                                                                                                                                                                     |
+| -------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `guard-command`      | **bloque** / **demande** | commandes destructrices (`rm -rf /`, effacement disque, fork bombs), exfiltration (`curl … \| bash`, uploads), escalation (`sudo`, setuid) ; **demande** avant les ops git réécrivant l'historique |
+| `guard-secret`       | **bloque**               | lecture de fichiers secrets (`.env`, clés SSH/PGP, `~/.aws/credentials`, state Terraform, …), symlinks résolus                                                                                     |
+| `guard-write-secret` | **bloque**               | écriture d'une valeur de secret en dur (clé AWS, PAT GitHub, clé privée, …) dans un fichier                                                                                                        |
+| `guard-prompt`       | **avertit**              | signatures d'injection de prompt dans le texte soumis/collé (non bloquant, via `additionalContext`)                                                                                                |
+
+Les quatre sont **fail-open** (une erreur de hook ne bloque jamais un travail
+légitime) et journalisent dans des fichiers `0600` rotés via le harness partagé
+`_shared/hook-lib.ts`.
+
+> **Défense en profondeur, pas un sandbox.** Les guards par correspondance de
+> chaînes sont contournables par obfuscation shell et ne couvrent **pas** les
+> outils MCP. Ils complètent — ne remplacent jamais — la liste deny et les scopes
+> au moindre privilège. Voir [`guardrails.md`](guardrails.md)
+> (🇫🇷 [FR](guardrails.fr.md)) pour le comportement et les limites, et
+> [`THREAT_MODEL.md`](THREAT_MODEL.md) pour ce qui est défendu ou non.
+
+---
+
+## 7. Soft vs hardened
 
 Le moteur se livre en deux modes, choisis par un knob de build.
 
@@ -255,6 +309,7 @@ flowchart TD
 
 - [`how-it-works.md`](how-it-works.md) — version anglaise (source)
 - [`CONTEXT.md`](../CONTEXT.md) — glossaire du domaine
+- [`guardrails.md`](guardrails.md) — les guardrail hooks : comportement (bloque / demande / avertit), ce qu'ils protègent, limites · 🇫🇷 [FR](guardrails.fr.md)
+- [`THREAT_MODEL.md`](THREAT_MODEL.md) — ce qui est défendu ou non, contournements connus, hypothèses de confiance
 - [`docs/adr/`](adr/) — architecture decision records
-- [`docs/infographic-brief.md`](infographic-brief.md) — brief de l'infographie d'onboarding (pour Claude Design)
 - [`README.md`](../README.md) — chemins d'installation et démarrage rapide
