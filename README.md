@@ -215,6 +215,7 @@ tests/                          bun test suite (isolated HOME)
 
 - [`docs/how-it-works.md`](docs/how-it-works.md) — architecture walk-through with diagrams (three layers, check/apply flow, scope precedence, soft/hardened, MCP servers) · 🇫🇷 [version française](docs/how-it-works.fr.md)
 - [`docs/guardrails.md`](docs/guardrails.md) — the guardrail hooks: what they do, what they protect, how they behave (block / ask / warn) · 🇫🇷 [version française](docs/guardrails.fr.md)
+- [`docs/guardrails-internals.md`](docs/guardrails-internals.md) — internals: every rule, regex, capture, and the runtime flow (for modifying/extending a guard) · 🇫🇷 [version française](docs/guardrails-internals.fr.md)
 - [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md) — what is and isn't defended, known bypasses, trust assumptions
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — conventional commits, local hooks (Lefthook), and automated releases (semantic-release in CI)
 - [`docs/demo-setup.md`](docs/demo-setup.md) — demo runbook: launch Claude Code in a fresh isolated state (alias-based), walk-through, reset · 🇫🇷 [version française](docs/demo-setup.fr.md)

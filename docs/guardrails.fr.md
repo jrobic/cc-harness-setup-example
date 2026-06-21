@@ -79,3 +79,7 @@ tout changement soit intentionnel) :
 
 Pour le modèle complet — ce qui est défendu ou non, les hypothèses de confiance,
 et où les autres défenses doivent vivre — voir [`THREAT_MODEL.md`](./THREAT_MODEL.md).
+
+Pour lire le code : chaque règle, regex, et le flux d'exécution exact sont
+documentés dans [`guardrails-internals.fr.md`](./guardrails-internals.fr.md) (pour
+qui modifie ou étend un guard).
